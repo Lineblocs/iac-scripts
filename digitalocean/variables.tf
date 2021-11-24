@@ -30,19 +30,19 @@ variable "do_region" {
 variable "do_k8s_name" {
   description = "Digital Ocean Kubernetes cluster name (e.g. `k8s-do`)"
   type        = string
-  default     = "k8s-do"
+  default     = "lineblocs-k8s-do"
 }
 
 variable "do_k8s_pool_name" {
   description = "Digital Ocean Kubernetes default node pool name (e.g. `k8s-do-nodepool`)"
   type        = string
-  default     = "k8s-mainpool"
+  default     = "lineblocs-k8s-mainpool"
 }
 
 variable "do_k8s_nodes" {
   description = "Digital Ocean Kubernetes default node pool size (e.g. `2`)"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "do_k8s_node_type" {
@@ -54,7 +54,7 @@ variable "do_k8s_node_type" {
 variable "do_k8s_nodepool_name" {
   description = "Digital Ocean Kubernetes additional node pool name (e.g. `k8s-do-nodepool`)"
   type        = string
-  default     = "k8s-nodepool"
+  default     = "lineblocs-k8s-nodepool"
 }
 
 variable "do_k8s_nodepool_type" {
@@ -67,4 +67,34 @@ variable "do_k8s_nodepool_size" {
   description = "Digital Ocean Kubernetes additional node pool size (e.g. `3`)"
   type        = number
   default     = 2
+}
+
+variable "do_k8s_media_nodepool_name" {
+  description = "Digital Ocean Kubernetes additional node pool name (e.g. `k8s-do-nodepool`)"
+  type        = string
+  default     = "lineblocs-k8s-media-nodepool"
+}
+
+variable "do_k8s_media_nodepool_type" {
+  description = "Digital Ocean Kubernetes additional node pool type (e.g. `s-1vcpu-2gb` => 1vCPU, 2GB RAM)"
+  type        = string
+  default     = "s-1vcpu-2gb"
+}
+
+variable "do_k8s_media_nodepool_min_nodes" {
+  description = "Digital Ocean Kubernetes additional node pool size (e.g. `3`)"
+  type        = number
+  default     = 1
+}
+
+variable "do_k8s_media_nodepool_max_nodes" {
+  description = "Digital Ocean Kubernetes additional node pool size (e.g. `3`)"
+  type        = number
+  default     = 2
+}
+
+variable "do_k8s_media_nodepool_size" {
+  description = "Digital Ocean Kubernetes additional node pool size (e.g. `3`)"
+  type        = number
+  default     = 6
 }
