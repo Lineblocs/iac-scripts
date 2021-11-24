@@ -33,13 +33,23 @@ resource "digitalocean_kubernetes_cluster" "k8s" {
   }
 }
 
-resource "digitalocean_kubernetes_node_pool" "k8s_nodes" {
+resource "digitalocean_kubernetes_node_router_pool" "k8s_nodes" {
   count      = var.enable_digitalocean ? 1 : 0
   cluster_id = digitalocean_kubernetes_cluster.k8s[count.index].id
 
   name       = var.do_k8s_nodepool_name
   size       = var.do_k8s_nodepool_type
   node_count = var.do_k8s_nodepool_size
+}
+
+resource "digitalocean_kubernetes_node_media_pool" "k8s_nodes" {
+  count      = var.enable_digitalocean ? 1 : 0
+  cluster_id = digitalocean_kubernetes_cluster.k8s[count.index].id
+
+  name       = var.do_k8s_media_nodepool_name
+  size       = var.do_k8s_media_nodepool_type
+  node_count = var.do_k8s_media_nodepool_size
+  auto_scale = true
 }
 
 resource "local_file" "kubeconfigdo" {

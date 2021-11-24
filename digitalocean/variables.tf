@@ -63,3 +63,23 @@ variable "do_k8s_nodepool_size" {
   type        = number
   default     = 2
 }
+
+
+variable "do_k8s_media_nodepool_name" {
+  description = "Digital Ocean Kubernetes additional node pool name (e.g. `k8s-do-nodepool`)"
+  type        = string
+  default     = "k8s-media-nodepool"
+}
+
+variable "do_k8s_media_nodepool_type" {
+  description = "Digital Ocean Kubernetes additional node pool type (e.g. `s-1vcpu-2gb` => 1vCPU, 2GB RAM)"
+  type        = string
+  default     = "s-1vcpu-2gb"
+}
+
+variable "do_k8s_media_nodepool_size" {
+  description = "Digital Ocean Kubernetes additional node pool size (e.g. `3`)"
+  type        = number
+  default     = 2
+}
+
