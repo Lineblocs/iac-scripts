@@ -4,6 +4,11 @@ variable "enable_digitalocean" {
   default     = true
 }
 
+variable "kube_version" {
+  description = "Version to use"
+  type        = string
+  default     = "1.22"
+}
 variable "random_cluster_suffix" {
   description = "Random 6 byte hex suffix for cluster name"
   type        = string
