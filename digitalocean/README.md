@@ -8,6 +8,7 @@ It uses the latest available Digital Ocean Kubernetes slug version available and
 
 ```
 Digitalocean account
+Registered domain name
 kubectl >= 1
 helm >= 3
 terraform >= 1.0.11
