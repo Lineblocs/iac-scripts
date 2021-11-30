@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lineblocs-tsc-compiler
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8080
+  selector:
+    app: lineblocs-tsc-compiler
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lineblocs-tsc-compiler
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lineblocs-tsc-compiler
+
+  template:
+    metadata:
+      labels:
+        app: lineblocs-tsc-compiler
+    spec:
+      containers:
+      - name: lineblocs-tsc-compiler
+        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-tsc-compiler:latest
+        ports:
+        - containerPort: 8080
+      imagePullSecrets:
+      - name: lineblocs-regcred

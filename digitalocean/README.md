@@ -1,100 +1,103 @@
-# Terraform Kubernetes on Digital Ocean
+# Lineblocs IaC scripts
 
-This repository contains the Terraform module for creating a Kubernetes Cluster on Digital Ocean.
+This repository contains the scripts and Terraform modules for deploying Lineblocs on Digital Ocean.
 
 It uses the latest available Digital Ocean Kubernetes slug version available and creates a kubeconfig file at completion.
 
-#### Link to my comprehensive blog post (beginner friendly):
-[https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean](https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean)
-
-
-<p align="center">
-<img alt="Digital Ocean Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/240px-DigitalOcean_logo.svg.png">
-</p>
-
-
-- [Terraform Kubernetes on Digital Ocean](#Terraform-Kubernetes-on-Digital-Ocean)
-- [Requirements](#Requirements)
-- [Features](#Features)
-- [Notes](#Notes)
-- [Defaults](#Defaults)
-- [Runtime](#Runtime)
-- [Terraform Inputs](#Terraform-Inputs)
-- [Outputs](#Outputs)
-
-
-## Requirements
-
-You need a [Digital Ocean account](https://m.do.co/c/b40b1325cb18) and a [Personal access token](https://cloud.digitalocean.com/account/api/tokens).
-
-
-## Features
-
-* Always uses latest available Kubernetes version on Digital Ocean
-* Kubernetes Cluster with 1 + 2 = *3* worker nodes (default node pool + additional node pool)
-* **kubeconfig** file generation at completion
-
-
-## Notes
-
-* The resources will be created in your default Digital Ocean project
-* If you want to add/remove worker nodes, just edit the `do_k8s_nodepool_size` variable
-* It can take 2-3 minutes after Terraform completes until the Kubernetes nodes are available
-* `export KUBECONFIG=./kubeconfig_do` in repo root dir to use the generated kubeconfig file
-* The `enable_digitalocean` is used in the hajowieland/terraform-kubernetes-multi-cloud module
-
-## Defaults
-
-See tables at the end for a comprehensive list of inputs and outputs.
-
-
-* Default region: **fra1** _(Frankfurt, Germany)_
-* Default Kubernetes version: **1.14.2-do.0**
-* Default Node type: **s-1vcpu-2gb** _(1x vCPU, 2GB memory)_
-* Default main pool size: **1**
-* Default additional node pool size: **2**
-
-
-## Runtime
-
-Runtime `terraform apply`:
-
-~5-7min
+## Requirements / Dependencies
 
 ```
-2.56s user
-0.89s system
-7:16.37 total
+Digitalocean account
+kubectl >= 1
+helm >= 3
+terraform >= 1.0.11
 ```
 
+## Download pre-requisites
+
+### Kubectl
+
+Links to download kubectl can be found here: (kubectl tools)[https://kubernetes.io/docs/tasks/tools/]
+
+### Helm
+
+To download latest version of Helm, please follow the instructions in the link below:
+
+(Helm | Installing Helm)[https://helm.sh/docs/intro/install/]
+
+> note: please make sure to download version v3 or later
+
+### Terraform
+
+(Download Terraform - Terraform by HashiCorp)[https://www.terraform.io/downloads.html]
+
+## Installing Lineblocs
+
+Once you have setup all the dependencies, you can get started with the installation. This process consists of 2 steps:
+
+1. Creation of IaC resources
+2. K8s Deployment
+
+In the repository, there are helper scripts for K8s. These scripts can be used to deploy all of the Kubernetes services. For reference, the scripts can be found in the **k8s** directory.
+
+
+### Installation
+
+To get started with the installation, please refer to the following instructions:
+
+1. Setup terraform
+
+to setup the solution, please run:
 ```
-2.38s user
-0.75s system
-5:15.77 total
+terrform init
 ```
 
+2. make copy of example variables file
+```
+cp vars.tfvars.example vars.tfvars
+```
 
-## Terraform Inputs
+3. edit vars.tfvars
+    a) set do_region to a valid region. to view list of regions, please refer to [Regional Availability Matrix :: DigitalOcean Documentation](https://docs.digitalocean.com/products/platform/availability-matrix/)
+    b) do_token should be set to your DigitalOcean API token
+    c) (optional) changing the kube_version is optional. But if decide to change it, please be advised of potential issues. For example, some features may not be supported in older versions of Kubernetes.
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| enable_digitalocean | Enable / Disable Digital Ocean | bool | true | yes |
-| random_cluster_suffix | Random 6 byte hex suffix for cluster name | string |  | yes |
-| do_k8s_nodes | Worker nodes | int | 2 | yes |
-| do_token | Digital Ocean Personal access token | string | DUMMY | **yes** |
-| do_region | Digital Ocean region | string | fra1 | yes |
-| do_k8s_name | Digital Ocean Kubernetes cluster name | string | k8s-do | yes |
-| do_k8s_pool_name | Digital Ocean Kubernetes default node pool name | string | k8s-nodepool-do | yes |
-| do_k8s_nodes | Digital Ocean Kubernetes default node pool size | number | 1 | yes |
-| do_k8s_node_type | Digital Ocean Kubernetes default node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_type | Digital Ocean Kubernetes additional node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_size | Digital Ocean Kubernetes additional node pool size | number | 2 | yes |
+4. deploy infrastructure
 
+To deploy the solution, please run:
+```
+terraform apply
+```
 
+5. install K8s services
 
+Next, to setup the Kubernetes cluster, please run:
 
-## Outputs
+```
+./setup_k8s.sh
+```
 
-| Name | Description |
-|------|-------------|
-| kubeconfig_path_do | Kubernetes kubeconfig file |
+> Note: this may take a few minutes. However you will be notified of any updates
+
+Once the installation has completed, you will receive a link to the admin portal where you can setup the service. To complete the configuration, please open this link using a browser.
+
+## Configuring Lineblocs
+
+In the configuration, there are a few settings to keep in mind. For example, you can choose which TTS provider to use, or pick where you want to store your media files. But it is optional to change the config, and in most cases the default settings are fine.
+
+To finish the setup process, please go over all of the setup screens and fill in any required fields. 
+
+Then on the final screen, click "Save configuration".
+
+## Completing setup - logging in
+
+If you havent noticed any errors yet then Lineblocs is now ready for usage - you can login to the admin dashboard or create accounts in the user portal.
+
+## Next steps
+
+For more helpful guides, be sure to review the following articles:
+
+[Lineblocs - Setup SIP providers](https://docs.digitalocean.com/products/platform/availability-matrix/)
+[Lineblocs - Upload call rates](https://docs.digitalocean.com/products/platform/availability-matrix/)
+[Lineblocs - Debuging media servers](https://docs.digitalocean.com/products/platform/availability-matrix/)
+[Lineblocs - Deploying new SIP router](https://docs.digitalocean.com/products/platform/availability-matrix/)

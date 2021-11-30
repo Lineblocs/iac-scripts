@@ -1,0 +1,159 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: asterisk
+  namespace: voip
+  labels:
+    component: asterisk
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: asterisk
+  template:
+    metadata:
+      labels:
+        component: asterisk
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: component
+                operator: In
+                values:
+                - asterisk
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: asterisk
+          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/asterisk:latest
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "512Mi"
+            limits:
+              cpu: "300m"
+              memory: "2048Mi"
+          env:
+            - name: LINEBLOCS_KEY
+              value: xxx
+        #- name: natsgw
+        #  image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/natsgw:latest
+        #  env:
+        #    - name: ARI_APPLICATION
+        #      value: lineblocs
+        #    - name: ARI_USERNAME
+        #      value: ariuser
+        #    - name: ARI_PASSWORD
+        #      value: ed3fd1f1bf85e0251fc4403010a14625
+        - name: apps
+          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-ari-v2:latest
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          env:
+            - name: ARI_HOST
+              value: asterisk
+            - name: ARI_PORT
+              value: "8088"
+            - name: ARI_USERNAME
+              value: ariuser
+            - name: ARI_PASSWORD
+              value: ed3fd1f1bf85e0251fc4403010a14625
+            - name: ARI_USE_PROXY
+              value: "false"
+            - name: NATSGW_URL
+              value: nats://natshost:4222
+            - name: INTERNAL_API_HOST
+              value: internals.lineblocs.com
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: "/app/service.json"
+            - name: LOG_LEVEL
+              value: INFO
+            - name: LINEBLOCS_KEY
+              value: xxx
+            - name: AWS_ACCESS_KEY_ID
+              value: AKIAJHVI2B5KLCRD3BIQ
+            - name: AWS_SECRET_ACCESS_KEY
+              value: 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
+            - name: AWS_DEFAULT_REGION
+              value: ca-central-1
+        - name: monitor
+          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-media-monitor:latest
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+
+          env:
+            - name: DB_HOST
+              value: 104.248.107.119
+            - name: DB_USER
+              value: root
+            - name: DB_PASS
+              value: "4ChTXGuEUtrj6b4H"
+            - name: DB_NAME
+              value: lineblocs
+            - name: AMI_HOST
+              value: 127.0.0.1
+            - name: AMI_PORT
+              value: "5038"
+            - name: AMI_USER
+              value: ami
+            - name: AMI_PASS
+              value: lineblocs-xxx
+            - name: NATSGW_URL
+              value: nats://natshost:4222
+            - name: LOG_LEVEL
+              value: INFO
+            - name: LINEBLOCS_KEY
+              value: xxx
+            - name: LINEBLOCS_REGION
+              value: ca-central-1
+      imagePullSecrets:
+        - name: voip-regcred
+      #nodeSelector:
+      #  mediaServerNode: 'true'
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: experimental
+        effect: NoSchedule
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+ name: asterisk-hpa
+ namespace: voip
+spec:
+  minReplicas: 3
+  maxReplicas: 10000
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 40
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 300
+      selectPolicy: Max
+  scaleTargetRef: 
+    apiVersion: apps/v1
+    kind: Deployment 
+    name: asterisk

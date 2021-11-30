@@ -55,9 +55,6 @@ resource "digitalocean_kubernetes_node_pool" "k8s_media_nodes" {
   min_nodes  = var.do_k8s_media_nodepool_min_nodes
   max_nodes  = var.do_k8s_media_nodepool_max_nodes
   auto_scale = true
-  labels = {
-    mediaServerNode  = "true"
-  }
 }
 
 resource "local_file" "kubeconfigdo" {
