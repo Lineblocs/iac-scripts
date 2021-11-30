@@ -21,7 +21,6 @@ spec:
   selector:
     matchLabels:
       app: lineblocs-com
-      firewall: open
 
   template:
     metadata:

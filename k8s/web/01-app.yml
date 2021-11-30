@@ -20,7 +20,6 @@ spec:
   selector:
     matchLabels:
       app: lineblocs-app
-      firewall: open
 
   template:
     metadata:

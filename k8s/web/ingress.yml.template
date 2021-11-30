@@ -8,7 +8,7 @@ metadata:
     default-ssl-certificate: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-    #service.beta.kubernetes.io/do-loadbalancer-hostname: "test.com"
+    #service.beta.kubernetes.io/do-loadbalancer-hostname: "DOMAIN_TO_CHANGE"
     ingress.kubernetes.io/proxy-body-size: "128m"
     nginx.org/proxy-connect-timeout: "30s"
     nginx.org/proxy-read-timeout: "20s"
@@ -17,65 +17,65 @@ metadata:
 spec:
   tls:
   - hosts:
-    - test.com
-    - app.test.com
-    - editor.test.com
-    - phpmyadmin.test.com
-    - internals.test.com
-    - prv.test.com
-    - emailer.test.com
-    - tsc.test.com
+    - DOMAIN_TO_CHANGE
+    - app.DOMAIN_TO_CHANGE
+    - editor.DOMAIN_TO_CHANGE
+    - phpmyadmin.DOMAIN_TO_CHANGE
+    - internals.DOMAIN_TO_CHANGE
+    - prv.DOMAIN_TO_CHANGE
+    - emailer.DOMAIN_TO_CHANGE
+    - tsc.DOMAIN_TO_CHANGE
     secretName: hello-kubernetes-tls
   rules:
-  - host: test.com
+  - host: DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-com
           servicePort: 80
-  - host: app.test.com
+  - host: app.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-app
           servicePort: 80
-  - host: editor.test.com
+  - host: editor.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-editor
           servicePort: 80
-  - host: phpmyadmin.test.com
+  - host: phpmyadmin.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: phpmyadmin-service
           servicePort: 80
-  - host: internals.test.com
+  - host: internals.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-internals
           servicePort: 80
-  - host: prv.test.com
+  - host: prv.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-prv
           servicePort: 80
-  - host: emailer.test.com
+  - host: emailer.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-emailer
           servicePort: 80
-  - host: tsc.test.com
+  - host: tsc.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:
           serviceName: lineblocs-tsc-compiler
           servicePort: 80
-  - host: s3fs.test.com
+  - host: s3fs.DOMAIN_TO_CHANGE
     http:
       paths:
       - backend:

@@ -66,7 +66,7 @@ resource "local_file" "kubeconfigdo" {
 
 resource "digitalocean_firewall" "cluster_firewall" {
   count      = var.enable_digitalocean ? 1 : 0
-  name = "cluster-firewall"
+  name = "lineblocs-cluster-firewall-${digitalocean_kubernetes_cluster.k8s[count.index].id}"
 
   inbound_rule {
     protocol         = "tcp"
@@ -86,7 +86,7 @@ resource "digitalocean_firewall" "cluster_firewall" {
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
-    outbound_rule {
+  outbound_rule {
     protocol              = "udp"
     port_range       = "1-65535"
     destination_addresses = ["0.0.0.0/0", "::/0"]

@@ -1,3 +1,20 @@
+#! /bin/sh
+while getopts d: flag
+do
+    case "${flag}" in
+        d) domain=${OPTARG};;
+    esac
+done
+echo "Domain: $domain";
+if [ -z ${domain} ]; then 
+   echo "domain not set. please rerun the script with the -d option. for example: ./setup_k8s.sh -d example.org"
+   exit -1
+fi
+
+DIR=`pwd`
+INGRESS="${DIR}/web/ingress.yml.template"
+INGRESS_OUT="${DIR}/web/ingress.yml"
+sed "s/DOMAIN_TO_CHANGE/${domain}/g" $INGRESS > $INGRESS_OUT
 command -v kubectl
 if [ "$?" -ne 0 ]; then
    echo "kubectl was not found. to continue, please install kubectl >= 1.20"
@@ -35,18 +52,21 @@ fi
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
 
 # install Helm packages
+helm repo add stable https://charts.helm.sh/stable
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add jetstack https://charts.jetstack.io
-helm install --name nginx-ingress stable/nginx-ingress --set controller.publishService.enabled=true
-helm install --name cert-manager --version v0.14.1 --namespace cert-manager jetstack/cert-manager
-helm install stable/metrics-server --name metrics-server
+helm repo update
+
+helm install nginx-ingress stable/nginx-ingress --set controller.publishService.enabled=true
+helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.14.1
+helm install metrics-server stable/metrics-server
 
 
 # in# create namespaces
 kubectl create namespace cert-manager
 kubectl create ns voip
 kubectl create ns voip-users
-kubectl create ns db
+kubectl create ns storage
 
 # create DB
 kubectl create -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
@@ -70,7 +90,7 @@ kubectl create -f ./rbac/cred-acc.yml
 kubectl create -f ./misc/crontabs.yml
 
 # voip services
-kubectl create -f ./voip/00-namespace.yaml,./voip/01-rbac.yaml,./voip/02-nats.yaml,./voip/03-opensips.yaml,./voip/04-asterisk.yaml,./voip/05-mngrs.yaml,./voip/06-k8sevents.yaml,./voip/07-grpc.yaml
+kubectl create -f ./voip/01-rbac.yaml,./voip/02-nats.yaml,./voip/03-opensips.yaml,./voip/04-asterisk.yaml,./voip/05-mngrs.yaml,./voip/06-k8sevents.yaml,./voip/07-grpc.yaml
 
 echo "services are starting.."
 sleep 10;

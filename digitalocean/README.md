@@ -69,12 +69,23 @@ To deploy the solution, please run:
 terraform apply
 ```
 
+> note: when you run this command, Terraform will automatically create the kubernetes config for you. The config will be saved in the same directory as the scripts.
+
+5. configure K8s
+
+Once the Terraform scripts finish running, you can configure K8s.
+
+To setup the config, please run:
+```
+export KUBECONFIG=$(pwd)/kubeconfig_do
+```
+
 5. install K8s services
 
 Next, to setup the Kubernetes cluster, please run:
 
 ```
-./setup_k8s.sh
+./setup_k8s.sh -d {YOUR_DOMAIN_NAME}
 ```
 
 > Note: this may take a few minutes. However you will be notified of any updates
