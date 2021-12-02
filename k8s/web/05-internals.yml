@@ -66,6 +66,13 @@ spec:
         ports:
           - containerPort: 80
           - containerPort: 9999
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "128Mi"
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
       imagePullSecrets:
       - name: lineblocs-regcred
 ---
@@ -73,6 +80,7 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
  name: internals-hpa
+ namespace: default
 spec:
  minReplicas: 3
  maxReplicas: 10

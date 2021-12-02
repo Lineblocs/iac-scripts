@@ -36,11 +36,32 @@ spec:
         livenessProbe:
           httpGet:
             path: /healthz
-            port: 9000
+            port: 8080
             httpHeaders:
             - name: X-Health
               value: health
           initialDelaySeconds: 3
           periodSeconds: 3
+        resources:
+          requests:
+            cpu: "10m"
+            memory: "128Mi"
+          limits:
+            cpu: "300m"
+            memory: "256Mi"
       imagePullSecrets:
       - name: lineblocs-regcred
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: com-hpa
+ namespace: default
+spec:
+ minReplicas: 1
+ maxReplicas: 5
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: lineblocs-com
+ targetCPUUtilizationPercentage: 30

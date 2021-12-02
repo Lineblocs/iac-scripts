@@ -56,5 +56,26 @@ spec:
               value: "4ChTXGuEUtrj6b4H"
             - name: DB_NAME
               value: lineblocs
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
       imagePullSecrets:
         - name: voip-regcred
+---
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+ name: grpc-hpa
+ namespace: voip
+spec:
+ minReplicas: 1
+ maxReplicas: 5
+ scaleTargetRef:
+   apiVersion: apps/v1
+   kind: Deployment
+   name: grpc
+ targetCPUUtilizationPercentage: 30
