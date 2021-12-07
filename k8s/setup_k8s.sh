@@ -69,7 +69,24 @@ kubectl create ns voip-users
 kubectl create ns storage
 
 # create DB
-kubectl create -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
+
+DB_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+B64_PASSWORD=$(echo -n $PASSWORD | base64)
+
+PXC_SECRETS="${DIR}/percona/deploy/secrets.yaml.template"
+PXC_SECRETS_OUT="${DIR}/percona/deploy/secrets.yaml"
+sed "s/LINEBLOCS_DB_PASSWORD/${B64_PASSWORD}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
+#kubectl create -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
+echo "Percona / MySQL password is: $DB_PASSWORD\r\n"
+
+# create percona ns
+kubectl create pxc
+
+kubectl apply -f ./percona/deploy/crd.yaml
+kubectl apply -f ./percona/deploy/rbac.yaml -n pxc
+kubectl apply -f ./percona/deploy/operator.yaml -n pxc
+kubectl apply -f ./percona/deploy/secrets.yaml -n pxc
+kubectl apply -f ./percona/deploy/cr.yaml -n pxc
 
 # create web services
 kubectl create -f ./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-internals.yml,./web/06-phpmyadmin.yml
