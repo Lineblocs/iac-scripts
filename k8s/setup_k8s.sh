@@ -55,11 +55,14 @@ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/relea
 helm repo add stable https://charts.helm.sh/stable
 helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
 helm repo add jetstack https://charts.jetstack.io
+helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 
+REDIS_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 helm install nginx-ingress stable/nginx-ingress --set controller.publishService.enabled=true
 helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v0.14.1
 helm install metrics-server stable/metrics-server
+helm install redis-cluster bitnami/redis --set global.redis.password="$REDIS_PASSWORD" --set auth.enabled=false
 
 
 # in# create namespaces
@@ -80,13 +83,23 @@ sed "s/LINEBLOCS_DB_PASSWORD/${DB_PASSWORD}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
 echo "Percona / MySQL password is: $DB_PASSWORD\r\n"
 
 # create percona ns
-kubectl create pxc
+kubectl create ns pxc
 
 kubectl apply -f ./percona/deploy/crd.yaml
 kubectl apply -f ./percona/deploy/rbac.yaml -n pxc
 kubectl apply -f ./percona/deploy/operator.yaml -n pxc
 kubectl apply -f ./percona/deploy/secrets.yaml -n pxc
 kubectl apply -f ./percona/deploy/cr.yaml -n pxc
+
+
+# install etcd
+ETCD_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+
+helm install etcd bitnami/etcd --set auth.rbac.rootPassword="${ETCD_PASSWORD}"
+
+INTERNALS="${DIR}/web/05-internals.yml.template"
+INTERNALS_OUT="${DIR}/web/05-internals.yml"
+sed "s/GENERATED_ETCD_PASSWORD/${ETCD_PASSWORD}/g" $INTERNALS > $INTERNALS_OUT
 
 # create web services
 kubectl create -f ./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-internals.yml,./web/06-phpmyadmin.yml

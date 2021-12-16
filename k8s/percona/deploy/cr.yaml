@@ -35,18 +35,19 @@ spec:
   pxc:
     size: 3
     image: percona/percona-xtradb-cluster:8.0.20-11.1
-    autoRecovery: false
-    schedulerName: mycustom-scheduler
-    readinessDelaySec: 15
-    livenessDelaySec: 600
-    forceUnsafeBootstrap: true
-    configuration: |
-        [mysqld]
-        pxc_strict_mode=PERMISSIVE
-#       [sst]
-#       xbstream-opts=--decompress
-#       [xtrabackup]
-#       compress=lz4
+#    autoRecovery: false
+#    schedulerName: mycustom-scheduler
+#    readinessDelaySec: 15
+#    livenessDelaySec: 600
+#    forceUnsafeBootstrap: false
+#    configuration: |
+#      [mysqld]
+#      wsrep_debug=ON
+#      wsrep_provider_options="gcache.size=1G; gcache.recover=yes"
+#      [sst]
+#      xbstream-opts=--decompress
+#      [xtrabackup]
+#      compress=lz4
 #      for PXC 5.7
 #      [xtrabackup]
 #      compress
