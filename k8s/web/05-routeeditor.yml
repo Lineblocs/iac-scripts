@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lineblocs-call-route-editor
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: lineblocs-call-route-editor
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lineblocs-call-route-editor
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lineblocs-call-route-editor
+
+  template:
+    metadata:
+      labels:
+        app: lineblocs-call-route-editor
+    spec:
+      containers:
+      - name: lineblocs-call-route-editor
+        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-call-route-editor:latest
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: lineblocs-regcred

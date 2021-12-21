@@ -8,7 +8,7 @@ metadata:
     default-ssl-certificate: letsencrypt-prod
     nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     service.beta.kubernetes.io/do-loadbalancer-enable-proxy-protocol: "true"
-    #service.beta.kubernetes.io/do-loadbalancer-hostname: "test.com"
+    #service.beta.kubernetes.io/do-loadbalancer-hostname: "lineblocs.com"
     ingress.kubernetes.io/proxy-body-size: "128m"
     nginx.org/proxy-connect-timeout: "30s"
     nginx.org/proxy-read-timeout: "20s"
@@ -17,65 +17,72 @@ metadata:
 spec:
   tls:
   - hosts:
-    - test.com
-    - app.test.com
-    - editor.test.com
-    - phpmyadmin.test.com
-    - internals.test.com
-    - prv.test.com
-    - emailer.test.com
-    - tsc.test.com
+    - lineblocs.com
+    - app.lineblocs.com
+    - editor.lineblocs.com
+    - route-editor.lineblocs.com
+    - phpmyadmin.lineblocs.com
+    - internals.lineblocs.com
+    - prv.lineblocs.com
+    - emailer.lineblocs.com
+    - tsc.lineblocs.com
     secretName: hello-kubernetes-tls
   rules:
-  - host: test.com
+  - host: lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-com
           servicePort: 80
-  - host: app.test.com
+  - host: app.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-app
           servicePort: 80
-  - host: editor.test.com
+  - host: editor.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-editor
           servicePort: 80
-  - host: phpmyadmin.test.com
+  - host: phpmyadmin.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: phpmyadmin-service
           servicePort: 80
-  - host: internals.test.com
+  - host: internals.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-internals
           servicePort: 80
-  - host: prv.test.com
+  - host: prv.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-prv
           servicePort: 80
-  - host: emailer.test.com
+  - host: emailer.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-emailer
           servicePort: 80
-  - host: tsc.test.com
+  - host: tsc.lineblocs.com
     http:
       paths:
       - backend:
           serviceName: lineblocs-tsc-compiler
           servicePort: 80
-  - host: s3fs.test.com
+  - host: route-editor.lineblocs.com
+    http:
+      paths:
+      - backend:
+          serviceName: lineblocs-call-route-editor
+          servicePort: 80
+  - host: s3fs.lineblocs.com
     http:
       paths:
       - backend:
