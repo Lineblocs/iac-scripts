@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rtpproxy
+  namespace: voip
+  labels:
+    component: rtpproxy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      component: rtpproxy
+  template:
+    metadata:
+      labels:
+        component: rtpproxy
+    spec:
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: component
+                operator: In
+                values:
+                - rtpproxy
+            topologyKey: "kubernetes.io/hostname"
+      containers:
+        - name: rtpproxy
+          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/rtpproxy:latest
+          resources:
+            requests:
+              cpu: "10m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "2048Mi"
+      imagePullSecrets:
+        - name: voip-regcred
+      #nodeSelector:
+      #  mediaServerNode: 'true'
+      tolerations:
+      - key: dedicated
+        operator: Equal
+        value: experimental
+        effect: NoSchedule
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+ name: rtpproxy-hpa
+ namespace: voip
+spec:
+  minReplicas: 3
+  maxReplicas: 10000
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Pods
+        value: 1
+        periodSeconds: 300
+      selectPolicy: Max
+  scaleTargetRef: 
+    apiVersion: apps/v1
+    kind: Deployment 
+    name: rtpproxy
