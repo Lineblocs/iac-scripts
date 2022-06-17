@@ -50,9 +50,9 @@ spec:
             cpu: "4096m"
             memory: "16384Mi"
       imagePullSecrets:
-      - name: lineblocs-regcred
+      - name: web-regcred
 ---
-apiVersion: autoscaling/v2beta2
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
  name: com-hpa

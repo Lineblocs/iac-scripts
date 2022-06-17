@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 while getopts d: flag
 do
     case "${flag}" in
@@ -37,10 +37,13 @@ if [ "${kube_details_1}" != '"1"' ]; then
    exit
 fi
 helm_version=`helm  version --template='{{.Version}}'`
-if [ "${helm_version}" == '<no value>' ]; then
+
+echo "helm version is '${helm_version}'"
+if [ "${helm_version}" == "<no value>" ]; then
    echo "helm version not supported, please install >= 3.0"
    exit
 fi
+
 helm_details_1=(${helm_version//v/ })
 helm_details_2=(${helm_details_1[0]//./ })
 if [ "${helm_details_2[0]}" != '3' ]; then
@@ -97,12 +100,12 @@ ETCD_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 helm install etcd bitnami/etcd --set auth.rbac.rootPassword="${ETCD_PASSWORD}"
 
-INTERNALS="${DIR}/web/05-internals.yml.template"
-INTERNALS_OUT="${DIR}/web/05-internals.yml"
+INTERNALS="${DIR}/web/06-internals.yml.template"
+INTERNALS_OUT="${DIR}/web/06-internals.yml"
 sed "s/GENERATED_ETCD_PASSWORD/${ETCD_PASSWORD}/g" $INTERNALS > $INTERNALS_OUT
 
 # create web services
-kubectl create -f ./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-internals.yml,./web/06-phpmyadmin.yml
+kubectl create -f ./web/00-namespace.yml,./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-routeeditor.yml,./web/06-internals.yml,./web/07-phpmyadmin.yml
 
 # setup cert manager
 kubectl create  -f ./web/production_issuer.yaml
@@ -120,9 +123,9 @@ kubectl create -f ./rbac/cred-acc.yml
 kubectl create -f ./misc/crontabs.yml
 
 # voip services
-kubectl create -f ./voip/01-rbac.yaml,./voip/02-nats.yaml,./voip/03-opensips.yaml,./voip/04-asterisk.yaml,./voip/05-mngrs.yaml,./voip/06-k8sevents.yaml,./voip/07-grpc.yaml
+kubectl create -f ./voip/00-namespace.yml,./voip/01-rbac.yml,./voip/02-nats.yml,./voip/03-opensips.yml,./voip/04-rtpproxy.yml,./voip/05-asterisk.yml,./voip/06-mngrs.yml,./voip/07-k8sevents.yml,./voip/08-grpc.yml
 
 echo "services are starting.."
 sleep 10;
-echo "to view the status of your deployment, run: kubectl -w get svc"
+echo "to view the status of your deployment, run: kubectl get svc -w"
 
