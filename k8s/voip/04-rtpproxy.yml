@@ -29,7 +29,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: rtpproxy
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/rtpproxy:latest
+          image: lineblocs/rtpproxy:latest
           resources:
             requests:
               cpu: "10m"
@@ -37,8 +37,6 @@ spec:
             limits:
               cpu: "300m"
               memory: "2048Mi"
-      imagePullSecrets:
-        - name: voip-regcred
       #nodeSelector:
       #  mediaServerNode: 'true'
       tolerations:

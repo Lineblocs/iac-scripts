@@ -19,9 +19,9 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: rtpproxy
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/rtpproxy:latest
+          image: lineblocs/rtpproxy:latest
         - name: opensips
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/opensips:latest
+          image: lineblocs/opensips-proxy:latest
           resources:
             requests:
               cpu: "100m"
@@ -42,7 +42,5 @@ spec:
               value: 127.0.0.1
             - name: LINEBLOCS_KEY
               value: xxx
-      imagePullSecrets:
-        - name: voip-regcred
       nodeSelector:
         routerNode: 'true'

@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: recordings-mngr
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-recordings-mngr:latest
+          image: lineblocs/recordings-mngr:latest
           env:
             - name: DB_HOST
               value: 104.248.107.119
@@ -50,7 +50,7 @@ spec:
             - name: AWS_DEFAULT_REGION
               value: ca-central-1
         - name: billing-mngr
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-billing-mngr:latest
+          image: lineblocs/billing-mngr:latest
           env:
             - name: DB_HOST
               value: 104.248.107.119
@@ -83,5 +83,3 @@ spec:
               value: 1bI6kqi2um3zBakR6g1Ng7qbnAHx3FapiuHHz1hx
             - name: AWS_DEFAULT_REGION
               value: ca-central-1
-      imagePullSecrets:
-        - name: voip-regcred

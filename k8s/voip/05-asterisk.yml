@@ -29,7 +29,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: asterisk
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/asterisk:latest
+          image: lineblocs/asterisk:latest
           resources:
             requests:
               cpu: "10m"
@@ -120,8 +120,6 @@ spec:
               value: xxx
             - name: LINEBLOCS_REGION
               value: ca-central-1
-      imagePullSecrets:
-        - name: voip-regcred
       #nodeSelector:
       #  mediaServerNode: 'true'
       tolerations:
