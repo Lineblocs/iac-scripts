@@ -50,7 +50,7 @@ spec:
         #    - name: ARI_PASSWORD
         #      value: ed3fd1f1bf85e0251fc4403010a14625
         - name: apps
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-ari-v2:latest
+          image: lineblocs/ari-apps:latest
           resources:
             requests:
               cpu: "10m"
@@ -86,7 +86,7 @@ spec:
             - name: AWS_DEFAULT_REGION
               value: ca-central-1
         - name: monitor
-          image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-media-monitor:latest
+          image: lineblocs/media-monitor:latest
           resources:
             requests:
               cpu: "10m"
