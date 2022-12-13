@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs:latest
+        image: lineblocs/site:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -49,8 +49,6 @@ spec:
           limits:
             cpu: "4096m"
             memory: "16384Mi"
-      imagePullSecrets:
-      - name: web-regcred
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

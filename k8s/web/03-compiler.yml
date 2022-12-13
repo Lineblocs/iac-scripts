@@ -28,8 +28,6 @@ spec:
     spec:
       containers:
       - name: lineblocs-tsc-compiler
-        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-tsc-compiler:latest
+        image: lineblocs/ts-compiler:latest
         ports:
         - containerPort: 8080
-      imagePullSecrets:
-      - name: web-regcred

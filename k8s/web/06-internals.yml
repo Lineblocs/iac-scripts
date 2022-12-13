@@ -67,7 +67,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 3
         name: lineblocs-internals
-        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-internals:latest
+        image: lineblocs/internals-api:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 80
@@ -79,8 +79,6 @@ spec:
           limits:
             cpu: "300m"
             memory: "256Mi"
-      imagePullSecrets:
-      - name: web-regcred
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

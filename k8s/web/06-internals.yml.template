@@ -67,7 +67,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 3
         name: lineblocs-internals
-        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-internals:latest
+        image: lineblocs/internals-api:latest
         imagePullPolicy: Always
         ports:
           - containerPort: 80

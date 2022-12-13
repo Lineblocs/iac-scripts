@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: lineblocs-editor
-        image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-editor:latest
+        image: lineblocs/flow-designer:latest
         ports:
         - containerPort: 80
       imagePullSecrets:
