@@ -21,7 +21,7 @@ spec:
             - name: STRIPE_KEY
               value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
             name: monthlybill
-            image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-crontabs:latest
+            image: lineblocs/crontabs:latest
             args:
               - /bin/bash
               - -c
@@ -53,7 +53,7 @@ spec:
             - name: STRIPE_KEY
               value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
             name: monthlybill
-            image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/lineblocs-crontabs:latest
+            image: lineblocs/crontabs:latest
             args:
               - /bin/bash
               - -c

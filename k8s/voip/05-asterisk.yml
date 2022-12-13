@@ -41,7 +41,7 @@ spec:
             - name: LINEBLOCS_KEY
               value: xxx
         #- name: natsgw
-        #  image: 754569496111.dkr.ecr.ca-central-1.amazonaws.com/natsgw:latest
+        #  image: lineblocs/natsgw:latest
         #  env:
         #    - name: ARI_APPLICATION
         #      value: lineblocs
