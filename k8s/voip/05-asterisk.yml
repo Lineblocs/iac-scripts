@@ -38,10 +38,8 @@ spec:
               cpu: "300m"
               memory: "2048Mi"
           env:
-            - name: LINEBLOCS_KEY
-              value: xxx
-            - name: INTERNALS_API_ENDPOINT
-              value: INTERNALS_API_VALUE
+            - name: ARI_PASSWORD
+              value: GENERATED_ARI_PASSWORD
         #- name: natsgw
         #  image: lineblocs/natsgw:latest
         #  env:
@@ -68,7 +66,7 @@ spec:
             - name: ARI_USERNAME
               value: ariuser
             - name: ARI_PASSWORD
-              value: ed3fd1f1bf85e0251fc4403010a14625
+              value: GENERATED_ARI_PASSWORD
             - name: ARI_USE_PROXY
               value: "false"
             - name: NATSGW_URL
