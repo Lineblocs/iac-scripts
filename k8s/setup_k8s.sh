@@ -139,8 +139,13 @@ kubectl create -f ./misc/crontabs.yml
 
 ARI_TMPL="${DIR}/web/05-asterisk.yml.template"
 ARI="${DIR}/web/05-asterisk.yml"
-sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $ARI_TMPL > $ARI
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $ARI_TMPL > $ARI.cop
+sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $ARI.cop > $ARI
 
+OPENSIPS_TMPL="${DIR}/web/03-opensips.yml.template"
+OPENSIPS="${DIR}/web/03-opensips.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS_TMPL > $OPENSIPS.cop
+sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $opensips.cop > $OPENSIPS
 
 # voip services
 kubectl create -f ./voip/00-namespace.yml,./voip/01-rbac.yml,./voip/02-nats.yml,./voip/03-opensips.yml,./voip/04-rtpproxy.yml,./voip/05-asterisk.yml,./voip/06-mngrs.yml,./voip/07-k8sevents.yml,./voip/08-grpc.yml

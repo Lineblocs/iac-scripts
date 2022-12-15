@@ -41,6 +41,8 @@ spec:
             - name: RTPPROXY_IPV4
               value: 127.0.0.1
             - name: LINEBLOCS_KEY
-              value: xxx
+              value: CONFIGURED_LINEBLOCS_KEY
+            - name: DEPLOYMENT_DOMAIN
+              value: CONFIGURED_DEPLOYMENT_DOMAIN
       nodeSelector:
         routerNode: 'true'
