@@ -51,6 +51,10 @@ if [ "${helm_details_2[0]}" != '3' ]; then
    exit
 fi
 
+
+# configured lineblocs key
+lineblocs_key='exmaple-strong-key'
+
 # install CRDs
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
 
