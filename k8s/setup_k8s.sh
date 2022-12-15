@@ -152,6 +152,17 @@ OPENSIPS="${DIR}/web/03-opensips.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS_TMPL > $OPENSIPS.cop
 sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $opensips.cop > $OPENSIPS
 
+MNGRS_TMPL="${DIR}/web/06-mngrs.yml.template"
+MNGRS="${DIR}/web/06-mngrs.yml"
+
+K8SEVENTS_TMPL="${DIR}/web/07-k8sevents.yml.template"
+K8SEVENTS="${DIR}/web/07-k8sevents.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $K8SEVENTS_TMPL > $K8SEVENTS.cop
+sed "s/DB_NAME/${db_name}/g" $K8SEVENTS_TMPL.cop > $K8SEVENTS.cop2
+sed "s/DB_USERNAME/${db_username}/g" $K8SEVENTS_TMPL.cop2 > $K8SEVENTS.cop3
+sed "s/DB_PASSWORD/${db_password}/g" $K8SEVENTS_TMPL.cop3 > $K8SEVENTS.cop4
+sed "s/DB_HOST/${db_host}/g" $K8SEVENTS_TMPL.cop4 > $K8SEVENTS
+
 # voip services
 kubectl create -f ./voip/00-namespace.yml,./voip/01-rbac.yml,./voip/02-nats.yml,./voip/03-opensips.yml,./voip/04-rtpproxy.yml,./voip/05-asterisk.yml,./voip/06-mngrs.yml,./voip/07-k8sevents.yml,./voip/08-grpc.yml
 
