@@ -53,7 +53,8 @@ fi
 
 
 # configured lineblocs key
-lineblocs_key='exmaple-strong-key'
+#lineblocs_key='exmaple-strong-key'
+lineblocs_key=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 
 # install CRDs
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.14.1/cert-manager.crds.yaml
