@@ -33,16 +33,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: AWS_ACCESS_KEY_ID
-          value: AKIAJHVI2B5KLCRD3BIQ
-        - name: AWS_SECRET_ACCESS_KEY
-          value: 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
-        - name: MAILGUN_DOMAIN
-          value: email.lineblocs.com
-        - name: MAILGUN_API_KEY
-          value: XXX
-        - name: STRIPE_KEY
-          value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
         - name: DB_HOST
           value: mysql
         - name: DB_USER
@@ -83,8 +73,6 @@ spec:
           limits:
             cpu: "300m"
             memory: "256Mi"
-      imagePullSecrets:
-      - name: web-regcred
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

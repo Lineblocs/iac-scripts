@@ -104,6 +104,21 @@ INTERNALS="${DIR}/web/06-internals.yml.template"
 INTERNALS_OUT="${DIR}/web/06-internals.yml"
 sed "s/GENERATED_ETCD_PASSWORD/${ETCD_PASSWORD}/g" $INTERNALS > $INTERNALS_OUT
 
+
+APP_TMPL="${DIR}/web/01-app.yml.template"
+APP="${DIR}/web/01-app.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${DEPLOYMENT_DOMAIND}/g" $APP_TMPL > $APP
+
+WEB_TMPL="${DIR}/web/02-com.yml.template"
+WEB="${DIR}/web/02-com.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${DEPLOYMENT_DOMAIND}/g" $WEB_TMPL > $WEB
+
+EDITOR_TMPL="${DIR}/web/04-editor.yml.template"
+EDITOR="${DIR}/web/04-editor.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${DEPLOYMENT_DOMAIND}/g" $EDITOR_TMPL > $EDITOR
+
+
+
 # create web services
 kubectl create -f ./web/00-namespace.yml,./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-routeeditor.yml,./web/06-internals.yml,./web/07-phpmyadmin.yml
 

@@ -27,8 +27,6 @@ spec:
               - -c
               - cd /app/ && ./main.go monthly
           restartPolicy: OnFailure
-          imagePullSecrets:
-          - name: lineblocs-regcred
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
