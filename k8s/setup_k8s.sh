@@ -81,14 +81,18 @@ kubectl create ns storage
 
 # create DB
 
-DB_PASSWORD=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+db_name='lineblocs'
+db_username='dbuser'
+db_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
+db_host='dbcluster'
+
 #B64_PASSWORD=$(echo -n $PASSWORD | base64)
 
 PXC_SECRETS="${DIR}/percona/deploy/secrets.yaml.template"
 PXC_SECRETS_OUT="${DIR}/percona/deploy/secrets.yaml"
-sed "s/LINEBLOCS_DB_PASSWORD/${DB_PASSWORD}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
+sed "s/LINEBLOCS_DB_PASSWORD/${db_password}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
 #kubectl create -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
-echo "Percona / MySQL password is: $DB_PASSWORD\r\n"
+echo "Percona / MySQL password is: $db_password\r\n"
 
 # create percona ns
 kubectl create ns pxc
