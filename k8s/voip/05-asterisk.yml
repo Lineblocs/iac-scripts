@@ -40,6 +40,8 @@ spec:
           env:
             - name: LINEBLOCS_KEY
               value: xxx
+            - name: INTERNALS_API_ENDPOINT
+              value: INTERNALS_API_VALUE
         #- name: natsgw
         #  image: lineblocs/natsgw:latest
         #  env:

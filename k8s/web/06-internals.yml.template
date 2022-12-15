@@ -57,6 +57,10 @@ spec:
           value: root
         - name: ETCD_PASSWORD
           value: GENERATED_ETCD_PASSWORD
+        - name: USE_LIMIT_MIDDLEWARE
+          value: off
+        - name: USE_TLS
+          value: off
         livenessProbe:
           httpGet:
             path: /healthz
