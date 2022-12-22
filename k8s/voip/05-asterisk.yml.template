@@ -29,7 +29,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: asterisk
-          image: lineblocs/asterisk:latest
+          image: lineblocs/asterisk:master
           resources:
             requests:
               cpu: "10m"
@@ -50,7 +50,7 @@ spec:
         #    - name: ARI_PASSWORD
         #      value: ed3fd1f1bf85e0251fc4403010a14625
         - name: apps
-          image: lineblocs/ari-apps:latest
+          image: lineblocs/ari-apps:master
           resources:
             requests:
               cpu: "10m"
@@ -78,7 +78,7 @@ spec:
             - name: LINEBLOCS_KEY
               value: CONFIGURED_LINEBLOCS_KEY
         - name: monitor
-          image: lineblocs/media-monitor:latest
+          image: lineblocs/media-monitor:master
           resources:
             requests:
               cpu: "10m"

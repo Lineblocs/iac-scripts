@@ -36,7 +36,7 @@ spec:
               #value: http://events-processor/processEvent
               value: http://127.0.0.1:8000/processEvent
         - name: events-processor
-          image: lineblocs/k8s-events:latest
+          image: lineblocs/k8s-events:master
           ports:
             - containerPort: 8000
           env:

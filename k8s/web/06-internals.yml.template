@@ -61,7 +61,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 3
         name: lineblocs-internals
-        image: lineblocs/internals-api:latest
+        image: lineblocs/internals-api:master
         imagePullPolicy: Always
         ports:
           - containerPort: 80
@@ -73,6 +73,20 @@ spec:
           limits:
             cpu: "300m"
             memory: "256Mi"
+         env:
+          - name: DEPLOYMENT_DOMAIN
+            value: CONFIGURED_DEPLOYMENT_DOMAIN
+          - name: DB_HOST
+            value: CONFIGURED_DB_HOST
+          - name: DB_USER
+            value: CONFIGURED_DB_USERNAME
+          - name: DB_PASS
+            value: CONFIGURED_DB_PASSWORD
+          - name: DB_NAME
+            value: lineblocs
+          - name: DB_OPENSIPS_DATABASE
+            value: opensips           
+            value: CONFIGURED_OPENSIPS_DATABASE
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
         - name: grpc-processor
-          image: lineblocs/grpc-proxy:latest
+          image: lineblocs/grpc-proxy:master
           ports:
             - containerPort: 8017
             - containerPort: 9001

@@ -33,16 +33,6 @@ spec:
     spec:
       containers:
       - env:
-        - name: AWS_ACCESS_KEY_ID
-          value: AKIAJHVI2B5KLCRD3BIQ
-        - name: AWS_SECRET_ACCESS_KEY
-          value: 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
-        - name: MAILGUN_DOMAIN
-          value: email.lineblocs.com
-        - name: MAILGUN_API_KEY
-          value: XXX
-        - name: STRIPE_KEY
-          value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
         - name: DB_HOST
           value: mysql
         - name: DB_USER
@@ -57,6 +47,10 @@ spec:
           value: root
         - name: ETCD_PASSWORD
           value: 
+        - name: USE_LIMIT_MIDDLEWARE
+          value: off
+        - name: USE_TLS
+          value: off
         livenessProbe:
           httpGet:
             path: /healthz
@@ -67,7 +61,7 @@ spec:
           initialDelaySeconds: 3
           periodSeconds: 3
         name: lineblocs-internals
-        image: lineblocs/internals-api:latest
+        image: lineblocs/internals-api:master
         imagePullPolicy: Always
         ports:
           - containerPort: 80

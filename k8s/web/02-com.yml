@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: lineblocs/site:latest
+        image: lineblocs/site:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -51,7 +51,7 @@ spec:
             memory: "16384Mi"
         env:
           - name: DEPLOYMENT_DOMAIN
-            value: CONFIGURED_DEPLOYMENT_DOMAIN
+            value: test-lineblocs.com
           - name: DB_HOST
             value: cluster-db
           - name: DB_USERNAME

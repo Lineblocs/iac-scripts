@@ -21,7 +21,7 @@ spec:
             - name: STRIPE_KEY
               value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
             name: monthlybill
-            image: lineblocs/crontabs:latest
+            image: lineblocs/crontabs:master
             args:
               - /bin/bash
               - -c
@@ -51,7 +51,7 @@ spec:
             - name: STRIPE_KEY
               value: sk_live_XyRu0OIhRnlKjf3BvyHecpqy
             name: monthlybill
-            image: lineblocs/crontabs:latest
+            image: lineblocs/crontabs:master
             args:
               - /bin/bash
               - -c

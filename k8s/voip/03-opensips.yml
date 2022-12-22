@@ -19,9 +19,9 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: rtpproxy
-          image: lineblocs/rtpproxy:latest
+          image: lineblocs/rtpproxy:master
         - name: opensips
-          image: lineblocs/opensips-proxy:latest
+          image: lineblocs/opensips-proxy:master
           resources:
             requests:
               cpu: "100m"
@@ -44,5 +44,3 @@ spec:
               value: CONFIGURED_LINEBLOCS_KEY
             - name: DEPLOYMENT_DOMAIN
               value: CONFIGURED_DEPLOYMENT_DOMAIN
-      nodeSelector:
-        routerNode: 'true'

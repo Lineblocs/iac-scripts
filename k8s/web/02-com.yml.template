@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: app
-        image: lineblocs/site:latest
+        image: lineblocs/site:master
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
@@ -53,15 +53,15 @@ spec:
           - name: DEPLOYMENT_DOMAIN
             value: CONFIGURED_DEPLOYMENT_DOMAIN
           - name: DB_HOST
-            value: cluster-db
+            value: CONFIGURED_DB_HOST
           - name: DB_USERNAME
-            value: dbuser
+            value: CONFIGURED_DB_USERNAME
           - name: DB_PASSWORD
-            value: DB_PASSWORD
+            value: CONFIGURED_DB_PASSWORD
           - name: DB_NAME
             value: lineblocs
           - name: DB_OPENSIPS_DATABASE
-            value: opensips
+            value: CONFIGURED_OPENSIPS_DATABASE
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

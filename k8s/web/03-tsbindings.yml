@@ -1,33 +1,33 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: lineblocs-tsc-compiler
+  name: lineblocs-tsc-bindings
 spec:
   type: ClusterIP
   ports:
   - port: 80
     targetPort: 8080
   selector:
-    app: lineblocs-tsc-compiler
+    app: lineblocs-tsc-bindings
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lineblocs-tsc-compiler
+  name: lineblocs-tsc-bindings
 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lineblocs-tsc-compiler
+      app: lineblocs-tsc-bindings
 
   template:
     metadata:
       labels:
-        app: lineblocs-tsc-compiler
+        app: lineblocs-tsc-bindings
     spec:
       containers:
-      - name: lineblocs-tsc-compiler
-        image: lineblocs/ts-compiler:latest
+      - name: lineblocs-tsc-bindings
+        image: lineblocs/ts-bindings:master
         ports:
         - containerPort: 8080

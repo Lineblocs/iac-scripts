@@ -29,7 +29,7 @@ spec:
             topologyKey: "kubernetes.io/hostname"
       containers:
         - name: rtpproxy
-          image: lineblocs/rtpproxy:latest
+          image: lineblocs/rtpproxy:master
           resources:
             requests:
               cpu: "10m"

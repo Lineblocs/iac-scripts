@@ -19,9 +19,9 @@ spec:
       dnsPolicy: ClusterFirstWithHostNet
       containers:
         - name: rtpproxy
-          image: lineblocs/rtpproxy:latest
+          image: lineblocs/rtpproxy:master
         - name: opensips
-          image: lineblocs/opensips-proxy:latest
+          image: lineblocs/opensips-proxy:master
           resources:
             requests:
               cpu: "100m"
@@ -31,13 +31,13 @@ spec:
               memory: "2048Mi"
           env:
             - name: DB_HOST
-              value: 104.248.107.119
+              value: CONFIGURED_DB_HOST
             - name: DB_USER
-              value: root
+              value: CONFIGURED_DB_USER
             - name: DB_PASSWORD
-              value: "4ChTXGuEUtrj6b4H"
+              value: CONFIGURED_DB_PASS
             - name: DB_NAME
-              value: opensips
+              value: CONFIGURED_OPENSIPS_DATABASE
             - name: RTPPROXY_IPV4
               value: 127.0.0.1
             - name: LINEBLOCS_KEY

@@ -29,6 +29,6 @@ spec:
     spec:
       containers:
       - name: lineblocs-call-route-editor
-        image: lineblocs/call-route-editor:latest
+        image: lineblocs/call-route-editor:master
         ports:
         - containerPort: 80

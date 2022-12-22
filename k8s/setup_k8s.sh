@@ -74,10 +74,7 @@ helm install redis-cluster bitnami/redis --set global.redis.password="$REDIS_PAS
 
 
 # in# create namespaces
-kubectl create namespace cert-manager
-kubectl create ns voip
-kubectl create ns voip-users
-kubectl create ns storage
+kubectl apply namespace cert-manager
 
 # create DB
 
@@ -85,17 +82,18 @@ db_name='lineblocs'
 db_username='dbuser'
 db_password=$(< /dev/urandom tr -dc _A-Z-a-z-0-9 | head -c${1:-32};echo;)
 db_host='dbcluster'
+opensips_db='opensips'
 
 #B64_PASSWORD=$(echo -n $PASSWORD | base64)
 
 PXC_SECRETS="${DIR}/percona/deploy/secrets.yaml.template"
 PXC_SECRETS_OUT="${DIR}/percona/deploy/secrets.yaml"
 sed "s/LINEBLOCS_DB_PASSWORD/${db_password}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
-#kubectl create -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
+#kubectl apply -f ./mysql/01-mysql-pv.yml,./mysql/02-mysql-deployment.yml,./mysql/03-mysql-lb.yml
 echo "Percona / MySQL password is: $db_password\r\n"
 
 # create percona ns
-kubectl create ns pxc
+kubectl apply ns pxc
 
 kubectl apply -f ./percona/deploy/crd.yaml
 kubectl apply -f ./percona/deploy/rbac.yaml -n pxc
@@ -111,16 +109,27 @@ helm install etcd bitnami/etcd --set auth.rbac.rootPassword="${ETCD_PASSWORD}"
 
 INTERNALS="${DIR}/web/06-internals.yml.template"
 INTERNALS_OUT="${DIR}/web/06-internals.yml"
-sed "s/GENERATED_ETCD_PASSWORD/${ETCD_PASSWORD}/g" $INTERNALS > $INTERNALS_OUT
-
+sed "s/GENERATED_ETCD_PASSWORD/${ETCD_PASSWORD}/g" $INTERNALS > $INTERNALS.cop1
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $INTERNALS.cop1 > $INTERNALS.cop2
+sed "s/CONFIGURED_DB_HOST/${db_host}/g" $INTERNALS.cop2 > $INTERNALS.cop3
+sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $INTERNALS.cop3 > $INTERNALS.cop4
+sed "s/CONFIGURED_DB_PASSWORD/${db_password}/g" $INTERNALS.cop4 > $INTERNALS.cop5
+sed "s/CONFIGURED_DB_NAME/${db_name}/g" $INTERNALS.cop5 > $INTERNALS.cop6
+sed "s/CONFIGURED_DB_OPENSIPS_DATABASE/${opensips_db}/g" $INTERNALS.cop6 > $INTERNALS
 
 APP_TMPL="${DIR}/web/01-app.yml.template"
 APP="${DIR}/web/01-app.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $APP_TMPL > $APP
 
+
 WEB_TMPL="${DIR}/web/02-com.yml.template"
 WEB="${DIR}/web/02-com.yml"
-sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $WEB_TMPL > $WEB
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $WEB_TMPL > $WEB.cop1
+sed "s/CONFIGURED_DB_HOST/${db_host}/g" $WEB.cop1 > $WEB.cop2
+sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $WEB.cop2 > $WEB.cop3
+sed "s/CONFIGURED_DB_PASSWORD/${db_password}/g" $WEB.cop3 > $WEB.cop4
+sed "s/CONFIGURED_DB_NAME/${db_name}/g" $WEB.cop4 > $WEB.cop5
+sed "s/CONFIGURED_DB_OPENSIPS_DATABASE/${opensips_db}/g" $WEB.cop5 > $WEB
 
 EDITOR_TMPL="${DIR}/web/04-editor.yml.template"
 EDITOR="${DIR}/web/04-editor.yml"
@@ -129,46 +138,63 @@ sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $EDITOR_TMPL > $EDITOR
 
 
 # create web services
-kubectl create -f ./web/00-namespace.yml,./web/01-app.yml,./web/02-com.yml,./web/03-compiler.yml,./web/04-editor.yml,./web/05-routeeditor.yml,./web/06-internals.yml,./web/07-phpmyadmin.yml
+kubectl apply -f ./web/00-namespace.yml,./web/01-app.yml,./web/02-com.yml,./web/03-tsbindings.yml,./web/04-editor.yml,./web/05-routeeditor.yml,./web/06-internals.yml,./web/07-phpmyadmin.yml
 
 # setup cert manager
-kubectl create  -f ./web/production_issuer.yaml
+kubectl apply  -f ./web/production_issuer.yaml
 
 # ingress
-kubectl create  -f ./web/ingress.yml
+kubectl apply  -f ./web/ingress.yml
 
 # metrics server
 kubectl apply -f https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
 
 # create extra service accounts
-kubectl create -f ./rbac/cred-acc.yml
+kubectl apply -f ./rbac/cred-acc.yml
 
 # create crontabs
-kubectl create -f ./misc/crontabs.yml
+kubectl apply -f ./misc/crontabs.yml
 
 ARI_TMPL="${DIR}/web/05-asterisk.yml.template"
 ARI="${DIR}/web/05-asterisk.yml"
-sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $ARI_TMPL > $ARI.cop
-sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $ARI.cop > $ARI
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $ARI_TMPL > $ARI.cop1
+sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $ARI.cop1 > $ARI.cop2
+sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $ARI.cop2 > $ARI.cop3
+sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $ARI.cop3 > $ARI
+
 
 OPENSIPS_TMPL="${DIR}/web/03-opensips.yml.template"
 OPENSIPS="${DIR}/web/03-opensips.yml"
-sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS_TMPL > $OPENSIPS.cop
-sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $opensips.cop > $OPENSIPS
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS_TMPL > $OPENSIPS.cop1
+sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $OPENSIPS.cop1 > $OPENSIPS.cop2
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS.cop2 > $OPENSIPS.cop3
+sed "s/CONFIGURED_DB_NAME/${db_name}/g" $OPENSIPS.cop3 > $OPENSIPS.cop4
+sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $OPENSIPS.cop4 > $OPENSIPS.cop5
+sed "s/CONFIGURED_DB_PASSWORD/${db_password}/g" $OPENSIPS.cop5 > $OPENSIPS.cop6
+sed "s/CONFIGURED_DB_HOST/${db_host}/g" $OPENSIPS.cop6 > $OPENSIPS.cop7
+sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $OPENSIPS.cop7 > $OPENSIPS.cop8
+sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $OPENSIPS.cop8 > $OPENSIPS
 
 MNGRS_TMPL="${DIR}/web/06-mngrs.yml.template"
 MNGRS="${DIR}/web/06-mngrs.yml"
+sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $MNGRS_TMPL > $MNGRS.cop
+sed "s/CONFIGURED_DB_NAME/${db_name}/g" $MNGRS.cop > $MNGRS.cop2
+sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $MNGRS.cop2 > $MNGRS.cop3
+sed "s/CONFIGURED_DB_PASSWORD/${db_password}/g" $MNGRS.cop3 > $MNGRS.cop4
+sed "s/CONFIGURED_DB_HOST/${db_host}/g" $MNGRS.cop4 > $MNGRS.cop5
+sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $MNGRS.cop5 > $MNGRS.cop6
+sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $MNGRS.cop6 > $MNGRS
 
 K8SEVENTS_TMPL="${DIR}/web/07-k8sevents.yml.template"
 K8SEVENTS="${DIR}/web/07-k8sevents.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $K8SEVENTS_TMPL > $K8SEVENTS.cop
-sed "s/DB_NAME/${db_name}/g" $K8SEVENTS_TMPL.cop > $K8SEVENTS.cop2
-sed "s/DB_USERNAME/${db_username}/g" $K8SEVENTS_TMPL.cop2 > $K8SEVENTS.cop3
-sed "s/DB_PASSWORD/${db_password}/g" $K8SEVENTS_TMPL.cop3 > $K8SEVENTS.cop4
-sed "s/DB_HOST/${db_host}/g" $K8SEVENTS_TMPL.cop4 > $K8SEVENTS
+sed "s/CONFIGURED_DB_NAME/${db_name}/g" $K8SEVENTS.cop > $K8SEVENTS.cop2
+sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $K8SEVENTS.cop2 > $K8SEVENTS.cop3
+sed "s/CONFIGURED_DB_PASSWORD/${db_password}/g" $K8SEVENTS.cop3 > $K8SEVENTS.cop4
+sed "s/CONFIGURED_DB_HOST/${db_host}/g" $K8SEVENTS.cop4 > $K8SEVENTS
 
 # voip services
-kubectl create -f ./voip/00-namespace.yml,./voip/01-rbac.yml,./voip/02-nats.yml,./voip/03-opensips.yml,./voip/04-rtpproxy.yml,./voip/05-asterisk.yml,./voip/06-mngrs.yml,./voip/07-k8sevents.yml,./voip/08-grpc.yml
+kubectl apply -f ./voip/00-namespace.yml,./voip/01-rbac.yml,./voip/02-nats.yml,./voip/03-opensips.yml,./voip/04-rtpproxy.yml,./voip/05-asterisk.yml,./voip/06-mngrs.yml,./voip/07-k8sevents.yml,./voip/08-grpc.yml
 
 echo "services are starting.."
 sleep 10;

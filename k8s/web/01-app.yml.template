@@ -28,7 +28,7 @@ spec:
     spec:
       containers:
       - name: lineblocs-app
-        image: lineblocs/user-app:latest
+        image: lineblocs/user-app:master
         ports:
         - containerPort: 80
         env:
