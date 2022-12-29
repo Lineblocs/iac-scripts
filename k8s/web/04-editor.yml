@@ -34,4 +34,4 @@ spec:
         - containerPort: 80
         env:
           - name: DEPLOYMENT_DOMAIN
-            value: test-lineblocs.com
+            value: lineblocs-test.com

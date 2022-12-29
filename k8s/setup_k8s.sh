@@ -93,7 +93,7 @@ sed "s/LINEBLOCS_DB_PASSWORD/${db_password}/g" $PXC_SECRETS > $PXC_SECRETS_OUT
 echo "Percona / MySQL password is: $db_password\r\n"
 
 # create percona ns
-kubectl apply ns pxc
+kubectl create ns pxc
 
 kubectl apply -f ./percona/deploy/crd.yaml
 kubectl apply -f ./percona/deploy/rbac.yaml -n pxc
@@ -155,16 +155,16 @@ kubectl apply -f ./rbac/cred-acc.yml
 # create crontabs
 kubectl apply -f ./misc/crontabs.yml
 
-ARI_TMPL="${DIR}/web/05-asterisk.yml.template"
-ARI="${DIR}/web/05-asterisk.yml"
+ARI_TMPL="${DIR}/voip/05-asterisk.yml.template"
+ARI="${DIR}/voip/05-asterisk.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $ARI_TMPL > $ARI.cop1
 sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $ARI.cop1 > $ARI.cop2
 sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $ARI.cop2 > $ARI.cop3
 sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $ARI.cop3 > $ARI
 
 
-OPENSIPS_TMPL="${DIR}/web/03-opensips.yml.template"
-OPENSIPS="${DIR}/web/03-opensips.yml"
+OPENSIPS_TMPL="${DIR}/voip/03-opensips.yml.template"
+OPENSIPS="${DIR}/voip/03-opensips.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS_TMPL > $OPENSIPS.cop1
 sed "s/CONFIGURED_LINEBLOCS_KEY/${lineblocs_key}/g" $OPENSIPS.cop1 > $OPENSIPS.cop2
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $OPENSIPS.cop2 > $OPENSIPS.cop3
@@ -175,8 +175,8 @@ sed "s/CONFIGURED_DB_HOST/${db_host}/g" $OPENSIPS.cop6 > $OPENSIPS.cop7
 sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $OPENSIPS.cop7 > $OPENSIPS.cop8
 sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $OPENSIPS.cop8 > $OPENSIPS
 
-MNGRS_TMPL="${DIR}/web/06-mngrs.yml.template"
-MNGRS="${DIR}/web/06-mngrs.yml"
+MNGRS_TMPL="${DIR}/voip/06-mngrs.yml.template"
+MNGRS="${DIR}/voip/06-mngrs.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $MNGRS_TMPL > $MNGRS.cop
 sed "s/CONFIGURED_DB_NAME/${db_name}/g" $MNGRS.cop > $MNGRS.cop2
 sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $MNGRS.cop2 > $MNGRS.cop3
@@ -185,8 +185,8 @@ sed "s/CONFIGURED_DB_HOST/${db_host}/g" $MNGRS.cop4 > $MNGRS.cop5
 sed "s/CONFIGURED_ARI_USERNAME/${ari_username}/g" $MNGRS.cop5 > $MNGRS.cop6
 sed "s/CONFIGURED_ARI_PASSWORD/${ari_password}/g" $MNGRS.cop6 > $MNGRS
 
-K8SEVENTS_TMPL="${DIR}/web/07-k8sevents.yml.template"
-K8SEVENTS="${DIR}/web/07-k8sevents.yml"
+K8SEVENTS_TMPL="${DIR}/voip/07-k8sevents.yml.template"
+K8SEVENTS="${DIR}/voip/07-k8sevents.yml"
 sed "s/CONFIGURED_DEPLOYMENT_DOMAIN/${domain}/g" $K8SEVENTS_TMPL > $K8SEVENTS.cop
 sed "s/CONFIGURED_DB_NAME/${db_name}/g" $K8SEVENTS.cop > $K8SEVENTS.cop2
 sed "s/CONFIGURED_DB_USERNAME/${db_username}/g" $K8SEVENTS.cop2 > $K8SEVENTS.cop3

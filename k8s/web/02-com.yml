@@ -51,17 +51,17 @@ spec:
             memory: "16384Mi"
         env:
           - name: DEPLOYMENT_DOMAIN
-            value: test-lineblocs.com
+            value: lineblocs-test.com
           - name: DB_HOST
-            value: cluster-db
+            value: dbcluster
           - name: DB_USERNAME
             value: dbuser
           - name: DB_PASSWORD
-            value: DB_PASSWORD
+            value: 
           - name: DB_NAME
             value: lineblocs
           - name: DB_OPENSIPS_DATABASE
-            value: opensips
+            value: CONFIGURED_OPENSIPS_DATABASE
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler

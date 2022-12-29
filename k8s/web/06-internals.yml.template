@@ -46,7 +46,7 @@ spec:
         - name: ETCD_USERNAME
           value: root
         - name: ETCD_PASSWORD
-          value: GENERATED_ETCD_PASSWORD
+          value: 
         - name: USE_LIMIT_MIDDLEWARE
           value: off
         - name: USE_TLS
@@ -75,13 +75,13 @@ spec:
             memory: "256Mi"
          env:
           - name: DEPLOYMENT_DOMAIN
-            value: CONFIGURED_DEPLOYMENT_DOMAIN
+            value: lineblocs-test.com
           - name: DB_HOST
-            value: CONFIGURED_DB_HOST
+            value: dbcluster
           - name: DB_USER
-            value: CONFIGURED_DB_USERNAME
+            value: dbuser
           - name: DB_PASS
-            value: CONFIGURED_DB_PASSWORD
+            value: 
           - name: DB_NAME
             value: lineblocs
           - name: DB_OPENSIPS_DATABASE
