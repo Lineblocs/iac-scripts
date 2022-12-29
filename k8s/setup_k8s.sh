@@ -30,7 +30,6 @@ kube_version=`kubectl version -o json`
 
 kube_details_1=`echo ${kube_version} | jq '.clientVersion .major'`
 kube_details_2=`echo ${kube_version} | jq '.clientVersion .minor'`
-echo $kube_details_1
 
 if [ "${kube_details_1}" != '"1"' ]; then
    echo "kubectl version not supported, please install >= 1.0"
