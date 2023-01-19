@@ -6,7 +6,7 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
-    targetPort: 80
+    targetPort: 8005
   selector:
     app: lineblocs-call-route-editor
 
@@ -31,4 +31,4 @@ spec:
       - name: lineblocs-call-route-editor
         image: lineblocs/call-route-editor:master
         ports:
-        - containerPort: 80
+        - containerPort: 8005

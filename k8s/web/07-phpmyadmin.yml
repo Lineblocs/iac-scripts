@@ -26,7 +26,7 @@ spec:
         - name: phpmyadmin
           image: phpmyadmin/phpmyadmin
           ports:
-            - containerPort: 80
+            - containerPort: 8015
           env:
             - name: PMA_HOST
               value: lineblocs.ckehyurhpc6m.ca-central-1.rds.amazonaws.com

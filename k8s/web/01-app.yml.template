@@ -6,7 +6,7 @@ spec:
   type: ClusterIP
   ports:
   - port: 80
-    targetPort: 8010
+    targetPort: 8000
   selector:
     app: lineblocs-app
 ---
@@ -30,7 +30,7 @@ spec:
       - name: lineblocs-app
         image: lineblocs/user-app:master
         ports:
-        - containerPort: 8010
+        - containerPort: 8000
         env:
           - name: DEPLOYMENT_DOMAIN
             value: CONFIGURED_DEPLOYMENT_DOMAIN
