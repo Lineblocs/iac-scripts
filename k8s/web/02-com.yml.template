@@ -58,7 +58,7 @@ spec:
             value: CONFIGURED_DB_USERNAME
           - name: DB_PASSWORD
             value: CONFIGURED_DB_PASSWORD
-          - name: DB_NAME
+          - name: DB_DATABASE
             value: lineblocs
           - name: DB_OPENSIPS_DATABASE
             value: CONFIGURED_OPENSIPS_DATABASE
