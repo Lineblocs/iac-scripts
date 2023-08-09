@@ -1,5 +1,5 @@
 locals {
-  name   = "lineblocs-eks-2"
+  name   = "lineblocs-eks-3"
   region = "eu-west-3"
 
   public_subnets  = ["10.123.1.0/24", "10.123.2.0/24"]

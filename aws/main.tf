@@ -2,6 +2,18 @@ provider "aws" {
   region = local.region
 }
 
+provider "kubernetes" {
+  host                   = module.eks.cluster_endpoint
+  cluster_ca_certificate = base64decode(module.eks.cluster_certificate_authority_data)
+
+  exec {
+    api_version = "client.authentication.k8s.io/v1beta1"
+    command     = "aws"
+    # This requires the awscli to be installed locally where Terraform is executed
+    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+  }
+}
+
 data "aws_availability_zones" "available" {}
 
 module "vpc" {
@@ -33,7 +45,7 @@ module "vpc" {
 
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.16.0"
+  version = "~> 19.0"
 
   cluster_name                   = local.name
   cluster_endpoint_public_access = true
@@ -48,11 +60,17 @@ module "eks" {
     vpc-cni = {
       most_recent = true
     }
+    aws-ebs-csi-driver = {
+      most_recent = true
+    }
   }
 
   vpc_id                   = module.vpc.vpc_id
   subnet_ids               = module.vpc.private_subnets
   control_plane_subnet_ids = module.vpc.intra_subnets
+
+  create_kms_key            = false
+  cluster_encryption_config = {}
 
   # Extend cluster security group rules
   cluster_security_group_additional_rules = {
@@ -76,6 +94,12 @@ module "eks" {
       type        = "ingress"
       self        = true
     }
+  }
+
+  # https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1986, or else ingress controller will not be able
+  # to start because of multiple security groups
+  node_security_group_tags = {
+    "kubernetes.io/cluster/${local.name}" = null
   }
 
   # EKS Managed Node Group(s)
@@ -108,7 +132,7 @@ module "eks" {
 
   # aws-auth configmap
   manage_aws_auth_configmap = true
-  aws_auth_users = [
+  aws_auth_users            = [
     for k, v in var.users : {
       userarn  = v.arn
       username = v.name
