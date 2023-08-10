@@ -16,6 +16,26 @@ provider "kubernetes" {
 
 data "aws_availability_zones" "available" {}
 
+data "aws_iam_policy" "ebs_csi_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEBSCSIDriverPolicy"
+}
+
+# We provide a role that we will attach to ebs service account (IRSA) in order to not give too much rights to all of
+# the pods. The other solution is to add AmazonEBSCSIDriverPolicy role to
+module "ebs_csi_irsa_role" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-role-for-service-accounts-eks"
+
+  role_name             = "ebs-csi"
+  attach_ebs_csi_policy = true
+
+  oidc_providers = {
+    main = {
+      provider_arn               = module.eks.oidc_provider_arn
+      namespace_service_accounts = ["kube-system:ebs-csi-controller-sa"]
+    }
+  }
+}
+
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 4.0"
@@ -62,6 +82,7 @@ module "eks" {
     }
     aws-ebs-csi-driver = {
       most_recent = true
+      service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   }
 
@@ -116,6 +137,7 @@ module "eks" {
       max_size     = 2
       desired_size = 2
 
+
       instance_types = var.aws_router_instance_type
       labels         = {
         routerNode = "true"
@@ -129,6 +151,7 @@ module "eks" {
       instance_types = var.aws_media_instance_type
     }
   }
+
 
   # aws-auth configmap
   manage_aws_auth_configmap = true
