@@ -1,100 +1,71 @@
-# Terraform Kubernetes on Digital Ocean
+# Terraform Kubernetes on Amazon EKS
 
-This repository contains the Terraform module for creating a Kubernetes Cluster on Digital Ocean.
+This repository contains the Terraform module for creating a Kubernetes Cluster on Amazon EKS.
 
-It uses the latest available Digital Ocean Kubernetes slug version available and creates a kubeconfig file at completion.
-
-#### Link to my comprehensive blog post (beginner friendly):
-[https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean](https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean)
+It uses the latest available EKS slug version available.
 
 
 <p align="center">
 <img alt="Digital Ocean Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/240px-DigitalOcean_logo.svg.png">
 </p>
 
-
-- [Terraform Kubernetes on Digital Ocean](#Terraform-Kubernetes-on-Digital-Ocean)
+- [Terraform Kubernetes on Amazon EKS](#Terraform-Kubernetes-on-Amazon-EKS)
 - [Requirements](#Requirements)
-- [Features](#Features)
 - [Notes](#Notes)
 - [Defaults](#Defaults)
 - [Runtime](#Runtime)
 - [Terraform Inputs](#Terraform-Inputs)
 - [Outputs](#Outputs)
 
-
 ## Requirements
 
-You need a [Digital Ocean account](https://m.do.co/c/b40b1325cb18) and a [Personal access token](https://cloud.digitalocean.com/account/api/tokens).
-
-
-## Features
-
-* Always uses latest available Kubernetes version on Digital Ocean
-* Kubernetes Cluster with 1 + 2 = *3* worker nodes (default node pool + additional node pool)
-* **kubeconfig** file generation at completion
-
+You need an [AWS account](https://docs.aws.amazon.com/accounts/latest/reference/manage-acct-creating.html)
+and [AWS CLI set up](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html).
 
 ## Notes
 
-* The resources will be created in your default Digital Ocean project
-* If you want to add/remove worker nodes, just edit the `do_k8s_nodepool_size` variable
-* It can take 2-3 minutes after Terraform completes until the Kubernetes nodes are available
-* `export KUBECONFIG=./kubeconfig_do` in repo root dir to use the generated kubeconfig file
-* The `enable_digitalocean` is used in the hajowieland/terraform-kubernetes-multi-cloud module
+* The resources will be created in your AWS account
+* You can tweak variables in the table below to customize cluster size to your need.
+* You can run this command ```aws eks update-kubeconfig --region <region-code> --name <my-cluster>``` to connect to the
+  cluster. More info [here](https://docs.aws.amazon.com/eks/latest/userguide/create-kubeconfig.html)
 
 ## Defaults
 
 See tables at the end for a comprehensive list of inputs and outputs.
 
-
-* Default region: **fra1** _(Frankfurt, Germany)_
-* Default Kubernetes version: **1.14.2-do.0**
-* Default Node type: **s-1vcpu-2gb** _(1x vCPU, 2GB memory)_
-* Default main pool size: **1**
-* Default additional node pool size: **2**
-
+* Default intra subnet: **["10.123.5.0/24", "10.123.6.0/24"]**
+* Default private subnet: **["10.123.3.0/24", "10.123.4.0/24"]**
+* Default public subnet: **["10.123.1.0/24", "10.123.2.0/24"]**
+* Default vpc cidr: **10.123.0.0/16**
+* Default media node type: **m5.large** _(2x vCPU, 8GB memory)_
+* Default router node type: **m5.large** _(2x vCPU, 8GB memory)_
+* Default media pool size: **4**
+* Default router pool size: **2**
 
 ## Runtime
 
 Runtime `terraform apply`:
 
-~5-7min
-
-```
-2.56s user
-0.89s system
-7:16.37 total
-```
-
-```
-2.38s user
-0.75s system
-5:15.77 total
-```
-
+~12min
 
 ## Terraform Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| enable_digitalocean | Enable / Disable Digital Ocean | bool | true | yes |
-| random_cluster_suffix | Random 6 byte hex suffix for cluster name | string |  | yes |
-| do_k8s_nodes | Worker nodes | int | 2 | yes |
-| do_token | Digital Ocean Personal access token | string | DUMMY | **yes** |
-| do_region | Digital Ocean region | string | fra1 | yes |
-| do_k8s_name | Digital Ocean Kubernetes cluster name | string | k8s-do | yes |
-| do_k8s_pool_name | Digital Ocean Kubernetes default node pool name | string | k8s-nodepool-do | yes |
-| do_k8s_nodes | Digital Ocean Kubernetes default node pool size | number | 1 | yes |
-| do_k8s_node_type | Digital Ocean Kubernetes default node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_type | Digital Ocean Kubernetes additional node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_size | Digital Ocean Kubernetes additional node pool size | number | 2 | yes |
+> NOTE: ([See the difference between intra and private subnets](https://registry.terraform.io/modules/terraform-aws-modules/vpc/aws/latest#private-versus-intra-subnets)
 
-
-
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| kubeconfig_path_do | Kubernetes kubeconfig file |
+| Name                 | Description                                           |     Type     |              Default               | Required |
+|----------------------|-------------------------------------------------------|:------------:|:----------------------------------:|:--------:|
+| cluster_name         | EKS cluster name                                      |    string    |                                    |   yes    |
+| intra_subnets        | VPC intra subnets                                     | list(string) | ["10.123.5.0/24", "10.123.6.0/24"] |   yes    |
+| media_desired_size   | EKS media desired count of node                       |    number    |                 4                  |   yes    |
+| media_instance_type  | EKS media node type                                   | list(string) |            ["m5.large"]            |   yes    |
+| media_max_size       | EKS media maximum count of node                       |    number    |                 4                  |   yes    |
+| media_min_size       | EKS media minimum count of node                       |    number    |                 4                  |   yes    |
+| private_subnets      | VPC private subnets                                   | list(string) | ["10.123.3.0/24", "10.123.4.0/24"] |   yes    |
+| public_subnets       | VPC public subnets                                    | list(string) | ["10.123.1.0/24", "10.123.2.0/24"] |   yes    |
+| region               | Resources regien                                      |    string    |                                    |   yes    |
+| router_desired_size  | EKS router desired count of node                      |    number    |                 2                  |   yes    |
+| router_instance_type | EKS router node type                                  | list(string) |            ["m5.large"]            |   yes    |
+| router_max_size      | EKS router maximum count of node                      |    number    |                 2                  |   yes    |
+| router_min_size      | EKS router minimum count of node                      |    number    |                 2                  |   yes    |
+| users                | Users list to be authorized (list of arn and username | list(object) |                                    |   yes    |
+| vpc_cidr             | VPC Classless Inter-Domain Routing                    |    string    |           10.123.0.0/16            |   yes    |
