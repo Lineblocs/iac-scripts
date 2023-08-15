@@ -10,7 +10,7 @@ examples.
 
 ## Getting Started
 
-Each subfolder has a readme but here is a common "Getting started" section.
+Each subfolder has a README, but here is a common "Getting started" section.
 
 1. Navigate to the `aws`, `digitalocean`, `gcp`, `linode`, or `vultr` directory depending on the infrastructure you want
    to deploy.
