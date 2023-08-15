@@ -1,12 +1,17 @@
 # IAC scripts
 
+> **IMPORTANT:** Please note that the majority of these examples, if not all, will not be free to try. For instance, EKS
+> charges 0.10 $ / hour per cluster.
+
 This repository contains IaC manifests that you will find useful to deploy Lineblocs charts. In every folder, you will
 find a Terraform project, K8S files, ... that you can use to deploy your infrastructe. You can tweak some settings
 like computing instances sizing, virtual private network CIDR and many more. Feel free to explore and use these
 examples.
 
-> **IMPORTANT:** Please note that the majority of these examples, if not all, will not be free to try. For instance, EKS
-> charges 0.10 $ / hour per cluster.
+- [Getting Started](#getting-started)
+- [Working with my team](#working-with-my-team)
+- [Supported cloud providers](#supported-cloud-providers)
+- [Contributing](#contributing)
 
 ## Getting Started
 
@@ -56,6 +61,17 @@ terraform {
 
 Keep in mind, state files can potentially include sensitive information, thus they should be stored securely and treated
 as sensitive data.
+
+## Supported cloud providers
+
+| Name          | Path           | Supported yet |
+|---------------|----------------|---------------|
+| AWS EKS       | ./aws          | yes           |
+| Azure AKS     | ./azure        | no            |
+| Google GKE    | ./gcp          | no            |
+| Digital Ocean | ./digitalocean | yes           |
+| Linode        | ./linode       | no            |
+| Vultr         | ./vultr        | no            |
 
 ## Contributing
 
