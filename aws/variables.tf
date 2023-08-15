@@ -11,8 +11,8 @@ variable "cluster_name" {
 }
 
 variable "cluster_version" {
-  type = string
-  default = "v1.27"
+  type    = string
+  default = "1.27"
 }
 
 variable "region" {
@@ -46,43 +46,62 @@ variable "intra_subnets" {
 ////////////////
 // Nodes
 ////////////////
-
-variable "router_instance_type" {
-  type    = list(string)
-  default = ["m5.large"]
-}
-
-variable "router_min_size" {
-  type    = number
+variable "media_desired_size" {
   default = 2
-}
-
-variable "router_max_size" {
   type    = number
-  default = 2
-}
-
-variable "router_desired_size" {
-  type    = number
-  default = 2
 }
 
 variable "media_instance_type" {
-  type    = list(string)
   default = ["m5.large"]
-}
-
-variable "media_min_size" {
-  type    = number
-  default = 4
+  type    = list(string)
 }
 
 variable "media_max_size" {
+  default = 2
   type    = number
-  default = 4
 }
 
-variable "media_desired_size" {
+variable "media_min_size" {
+  default = 2
   type    = number
+}
+
+variable "voip_desired_size" {
+  default = 2
+  type    = number
+}
+
+variable "voip_instance_type" {
+  default = ["m5.large"]
+  type    = list(string)
+}
+
+variable "voip_max_size" {
+  default = 2
+  type    = number
+}
+
+variable "voip_min_size" {
+  default = 2
+  type    = number
+}
+
+variable "web_desired_size" {
   default = 4
+  type    = number
+}
+
+variable "web_instance_type" {
+  default = ["m5.large"]
+  type    = list(string)
+}
+
+variable "web_max_size" {
+  default = 4
+  type    = number
+}
+
+variable "web_min_size" {
+  default = 4
+  type    = number
 }

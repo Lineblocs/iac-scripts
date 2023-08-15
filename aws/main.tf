@@ -69,7 +69,7 @@ module "eks" {
 
   cluster_name                   = var.cluster_name
   cluster_endpoint_public_access = true
-  cluster_version = var.cluster_version
+  cluster_version                = var.cluster_version
 
   cluster_addons = {
     coredns = {
@@ -133,17 +133,27 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    router = {
-      min_size     = var.router_min_size
-      max_size     = var.router_max_size
-      desired_size = var.router_desired_size
+    web = {
+      min_size     = var.web_min_size
+      max_size     = var.web_max_size
+      desired_size = var.web_desired_size
 
 
-      instance_types = var.router_instance_type
+      instance_types = var.web_instance_type
+    }
+
+    voip = {
+      min_size     = var.voip_min_size
+      max_size     = var.voip_max_size
+      desired_size = var.voip_desired_size
+
+
+      instance_types = var.voip_instance_type
       labels         = {
         routerNode = "true"
       }
     }
+
     media = {
       min_size     = var.media_min_size
       max_size     = var.media_max_size
