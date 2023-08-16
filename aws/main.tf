@@ -1,5 +1,5 @@
 provider "aws" {
-  region = local.region
+  region = var.region
 }
 
 provider "kubernetes" {
@@ -40,13 +40,13 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "~> 4.0"
 
-  name = local.name
-  cidr = local.vpc_cidr
+  name = var.cluster_name
+  cidr = var.vpc_cidr
 
   azs             = local.azs
-  private_subnets = local.private_subnets
-  public_subnets  = local.public_subnets
-  intra_subnets   = local.intra_subnets
+  private_subnets = var.private_subnets
+  public_subnets  = var.public_subnets
+  intra_subnets   = var.intra_subnets
 
   enable_nat_gateway = true
 
@@ -67,8 +67,9 @@ module "eks" {
   source  = "terraform-aws-modules/eks/aws"
   version = "~> 19.0"
 
-  cluster_name                   = local.name
+  cluster_name                   = var.cluster_name
   cluster_endpoint_public_access = true
+  cluster_version                = var.cluster_version
 
   cluster_addons = {
     coredns = {
@@ -81,7 +82,7 @@ module "eks" {
       most_recent = true
     }
     aws-ebs-csi-driver = {
-      most_recent = true
+      most_recent              = true
       service_account_role_arn = module.ebs_csi_irsa_role.iam_role_arn
     }
   }
@@ -120,7 +121,7 @@ module "eks" {
   # https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1986, or else ingress controller will not be able
   # to start because of multiple security groups
   node_security_group_tags = {
-    "kubernetes.io/cluster/${local.name}" = null
+    "kubernetes.io/cluster/${var.cluster_name}" = null
   }
 
   # EKS Managed Node Group(s)
@@ -132,23 +133,33 @@ module "eks" {
   }
 
   eks_managed_node_groups = {
-    router = {
-      min_size     = 2
-      max_size     = 2
-      desired_size = 2
+    web = {
+      min_size     = var.web_min_size
+      max_size     = var.web_max_size
+      desired_size = var.web_desired_size
 
 
-      instance_types = var.aws_router_instance_type
+      instance_types = var.web_instance_type
+    }
+
+    voip = {
+      min_size     = var.voip_min_size
+      max_size     = var.voip_max_size
+      desired_size = var.voip_desired_size
+
+
+      instance_types = var.voip_instance_type
       labels         = {
         routerNode = "true"
       }
     }
-    media = {
-      min_size     = 4
-      max_size     = 4
-      desired_size = 4
 
-      instance_types = var.aws_media_instance_type
+    media = {
+      min_size     = var.media_min_size
+      max_size     = var.media_max_size
+      desired_size = var.media_desired_size
+
+      instance_types = var.media_instance_type
     }
   }
 
