@@ -1,100 +1,83 @@
-# Terraform Kubernetes on Digital Ocean
+# Terraform Kubernetes on Google GKE
 
-This repository contains the Terraform module for creating a Kubernetes Cluster on Digital Ocean.
-
-It uses the latest available Digital Ocean Kubernetes slug version available and creates a kubeconfig file at completion.
-
-#### Link to my comprehensive blog post (beginner friendly):
-[https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean](https://napo.io/posts/terraform-kubernetes-multi-cloud-ack-aks-dok-eks-gke-oke/#digital-ocean)
-
+This repository contains the Terraform module for creating a Kubernetes Cluster on Google GKE.
 
 <p align="center">
-<img alt="Digital Ocean Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/240px-DigitalOcean_logo.svg.png">
+<img alt="GCP Logo" src="https://upload.wikimedia.org/wikipedia/fr/thumb/6/61/Google_Cloud_Logo.svg/320px-Google_Cloud_Logo.svg.png" title="GCP Logo">
 </p>
 
-
-- [Terraform Kubernetes on Digital Ocean](#Terraform-Kubernetes-on-Digital-Ocean)
+- [Terraform Kubernetes on Google GKE](#Terraform-Kubernetes-on-Google-GKE)
 - [Requirements](#Requirements)
-- [Features](#Features)
 - [Notes](#Notes)
 - [Defaults](#Defaults)
 - [Runtime](#Runtime)
 - [Terraform Inputs](#Terraform-Inputs)
 - [Outputs](#Outputs)
 
-
 ## Requirements
 
-You need a [Digital Ocean account](https://m.do.co/c/b40b1325cb18) and a [Personal access token](https://cloud.digitalocean.com/account/api/tokens).
+You need a [GCP account](https://console.cloud.google.com)
+and [gcloud CLI set up](https://cloud.google.com/sdk/docs/install?hl=fr).
 
+Run `gcloud init` to initialize your CLI. You can create a brand-new project for this test. Please note that it cannot
+run without a billing account attached to the project.
 
-## Features
-
-* Always uses latest available Kubernetes version on Digital Ocean
-* Kubernetes Cluster with 1 + 2 = *3* worker nodes (default node pool + additional node pool)
-* **kubeconfig** file generation at completion
-
+When you have everything set up, note your project ID. You will use it as the value of `project_id` variable.
 
 ## Notes
 
-* The resources will be created in your default Digital Ocean project
-* If you want to add/remove worker nodes, just edit the `do_k8s_nodepool_size` variable
-* It can take 2-3 minutes after Terraform completes until the Kubernetes nodes are available
-* `export KUBECONFIG=./kubeconfig_do` in repo root dir to use the generated kubeconfig file
-* The `enable_digitalocean` is used in the hajowieland/terraform-kubernetes-multi-cloud module
+* The resources will be created in your GCP project
+* You can tweak variables in the table below to customize cluster size to your need.
+* You can run this command
+  ```gcloud container clusters get-credentials <cluster_name> --location <region-code or zone-code>``` to
+  connect to the cluster.
+  More info [here](https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials)
+* You will probably need to install gke-gcloud-auth-plugin, refer
+  to [this link](https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke).
 
 ## Defaults
 
 See tables at the end for a comprehensive list of inputs and outputs.
 
-
-* Default region: **fra1** _(Frankfurt, Germany)_
-* Default Kubernetes version: **1.14.2-do.0**
-* Default Node type: **s-1vcpu-2gb** _(1x vCPU, 2GB memory)_
-* Default main pool size: **1**
-* Default additional node pool size: **2**
-
+* Default vpc cidr: **10.123.0.0/16**
+* Default web node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
+* Default web disk type: **pd-standard** _(HDD)_
+* Default media node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
+* Default media disk type: **pd-standard** _(HDD)_
+* Default router node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
+* Default router disk type: **pd-standard** _(HDD)_
+* Default web pool size: **4**
+* Default media pool size: **2**
+* Default voip pool size: **2**
+* Default zone: **null**
 
 ## Runtime
 
 Runtime `terraform apply`:
 
-~5-7min
+~12min
 
+```bash
+terraform apply  19,52s user 1,60s system 2% cpu 14:17,06 total
 ```
-2.56s user
-0.89s system
-7:16.37 total
-```
-
-```
-2.38s user
-0.75s system
-5:15.77 total
-```
-
 
 ## Terraform Inputs
 
-| Name | Description | Type | Default | Required |
-|------|-------------|:----:|:-----:|:-----:|
-| enable_digitalocean | Enable / Disable Digital Ocean | bool | true | yes |
-| random_cluster_suffix | Random 6 byte hex suffix for cluster name | string |  | yes |
-| do_k8s_nodes | Worker nodes | int | 2 | yes |
-| do_token | Digital Ocean Personal access token | string | DUMMY | **yes** |
-| do_region | Digital Ocean region | string | fra1 | yes |
-| do_k8s_name | Digital Ocean Kubernetes cluster name | string | k8s-do | yes |
-| do_k8s_pool_name | Digital Ocean Kubernetes default node pool name | string | k8s-nodepool-do | yes |
-| do_k8s_nodes | Digital Ocean Kubernetes default node pool size | number | 1 | yes |
-| do_k8s_node_type | Digital Ocean Kubernetes default node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_type | Digital Ocean Kubernetes additional node pool type | string | s-1vcpu-2gb | yes |
-| do_k8s_nodepool_size | Digital Ocean Kubernetes additional node pool size | number | 2 | yes |
-
-
-
-
-## Outputs
-
-| Name | Description |
-|------|-------------|
-| kubeconfig_path_do | Kubernetes kubeconfig file |
+| Name                   | Description                                             | Type   | Default values |
+|------------------------|---------------------------------------------------------|--------|----------------|
+| cluster_name           |                                                         | string |                |
+| cluster_version        | GKE cluster exact version, will overwrite prefix if set | string | null           |
+| cluster_version_prefix | GKE cluster version prefix                              | string | 1.27           |
+| media_count            | GKE media desired count of node                         | number | 2              |
+| media_disk_type        | GKE media nodes disk type                               | string | pd-standard    |
+| media_instance_type    | GKE media instance type                                 | string | e2-standard-2  |
+| project_id             | GCP project ID                                          | string |                |
+| region                 | GCP resources region                                    | string |                |
+| voip_count             | GKE voip desired count of node                          | number | 2              |
+| voip_disk_type         | GKE voip nodes disk type                                | string | pd-standard    |
+| voip_instance_type     | GKE voip instance type                                  | string | e2-standard-2  |
+| vpc_main_subnet        | VPC Classless Inter-Domain Routing                      | string | 10.123.0.0/24  |
+| web_count              | GKE web desired count of node                           | number | 4              |
+| web_disk_type          | GKE web nodes disk type                                 | string | pd-standard    |
+| web_instance_type      | GKE web instance type                                   | string | e2-standard-2  |
+| zone                   | GCP resources zone (uses region if not defined)         | string | null           |
