@@ -67,8 +67,8 @@ as sensitive data.
 | Name          | Path           | Supported yet |
 |---------------|----------------|---------------|
 | AWS EKS       | ./aws          | yes           |
-| Azure AKS     | ./azure        | no            |
-| Google GKE    | ./gcp          | no            |
+| Azure AKS     | ./azure        | yes           |
+| Google GKE    | ./gcp          | yes           |
 | Digital Ocean | ./digitalocean | yes           |
 | Linode        | ./linode       | no            |
 | Vultr         | ./vultr        | no            |
