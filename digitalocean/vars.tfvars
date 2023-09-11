@@ -1,5 +1,0 @@
-do_region="fra1"
-enable_digitalocean=true
-kube_version="1.27.4-do.0"
-do_token="dop_v1_da120ae031bd5e1da9b095548aabfb9a7e27096b149f1844c5edaa7425dbcca7"
-#do_token="a1d7405f16c7e93905f03734cf644f0cb2a6bb459b58fb6143a71b75d03c47cc"
