@@ -1,6 +1,6 @@
 # Terraform Kubernetes on Digital Ocean
 
-This repository contains the Terraform module for creating a Kubernetes Cluster on Google GKE.
+This repository contains the Terraform module for creating a Kubernetes Cluster on Digital Ocean.
 
 <p align="center">
 <img alt="DO Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/240px-DigitalOcean_logo.svg.png" title="DO Logo">
@@ -16,68 +16,62 @@ This repository contains the Terraform module for creating a Kubernetes Cluster 
 
 ## Requirements
 
-You need a [GCP account](https://console.cloud.google.com)
-and [gcloud CLI set up](https://cloud.google.com/sdk/docs/install?hl=fr).
+You need a [Digital Ocean account](https://cloud.digitalocean.com/registrations/new)
+and [doctl set up](https://docs.digitalocean.com/reference/doctl/).
 
-Run `gcloud init` to initialize your CLI. You can create a brand-new project for this test. Please note that it cannot
-run without a billing account attached to the project.
+For the project you want, you should create an API token in settings and run this command :
 
-When you have everything set up, note your project ID. You will use it as the value of `project_id` variable.
+```bash
+doctl auth init --context <name_of_the_new_context>
+```
+
+doctl will prompt you for the token. Then, everything is ready.
 
 ## Notes
 
-* The resources will be created in your GCP project
+* The resources will be created in your DO project
 * You can tweak variables in the table below to customize cluster size to your need.
 * You can run this command
-  ```gcloud container clusters get-credentials <cluster_name> --location <region-code or zone-code>``` to
+  ```doctl kubernetes cluster kubeconfig save <cluster_name>``` to
   connect to the cluster.
-  More info [here](https://cloud.google.com/sdk/gcloud/reference/container/clusters/get-credentials)
-* You will probably need to install gke-gcloud-auth-plugin, refer
-  to [this link](https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke).
+  More info [here](https://docs.digitalocean.com/reference/doctl/reference/kubernetes/cluster/kubeconfig/)
 
 ## Defaults
 
 See tables at the end for a comprehensive list of inputs and outputs.
 
-* Default vpc cidr: **10.123.0.0/16**
-* Default web node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
-* Default web disk type: **pd-standard** _(HDD)_
-* Default media node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
-* Default media disk type: **pd-standard** _(HDD)_
-* Default router node type: **e2-standard-2** _(2x vCPU, 8GB memory)_
-* Default router disk type: **pd-standard** _(HDD)_
+* Default web node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
+* Default media node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
+* Default router node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
 * Default web pool size: **4**
 * Default media pool size: **2**
 * Default voip pool size: **2**
-* Default zone: **null**
+* Default region: **tor1**
 
 ## Runtime
 
 Runtime `terraform apply`:
 
-~12min
+~8min
 
 ```bash
-terraform apply  19,52s user 1,60s system 2% cpu 14:17,06 total
+terraform apply  1,18s user 0,16s system 0% cpu 7:57,77 total
 ```
 
 ## Terraform Inputs
 
-| Name                   | Description                                             | Type   | Default values |
-|------------------------|---------------------------------------------------------|--------|----------------|
-| cluster_name           |                                                         | string |                |
-| cluster_version        | GKE cluster exact version, will overwrite prefix if set | string | null           |
-| cluster_version_prefix | GKE cluster version prefix                              | string | 1.27           |
-| media_count            | GKE media desired count of node                         | number | 2              |
-| media_disk_type        | GKE media nodes disk type                               | string | pd-standard    |
-| media_instance_type    | GKE media instance type                                 | string | e2-standard-2  |
-| project_id             | GCP project ID                                          | string |                |
-| region                 | GCP resources region                                    | string |                |
-| voip_count             | GKE voip desired count of node                          | number | 2              |
-| voip_disk_type         | GKE voip nodes disk type                                | string | pd-standard    |
-| voip_instance_type     | GKE voip instance type                                  | string | e2-standard-2  |
-| vpc_main_subnet        | VPC Classless Inter-Domain Routing                      | string | 10.123.0.0/24  |
-| web_count              | GKE web desired count of node                           | number | 4              |
-| web_disk_type          | GKE web nodes disk type                                 | string | pd-standard    |
-| web_instance_type      | GKE web instance type                                   | string | e2-standard-2  |
-| zone                   | GCP resources zone (uses region if not defined)         | string | null           |
+| Name                | Description                        | Type   | Default values |
+|---------------------|------------------------------------|--------|----------------|
+| cluster_name        | DO cluster name                    | string |                |
+| project_id          | DO project ID                      | string |                |
+| do_region           | DO resources region                | string |                |
+| do_token            | DO access token                    | string |                |
+| web_min_nodes       | DO k8s web minimum count of node   | number | 4              |
+| web_max_nodes       | DO k8s web maximum count of node   | number | 4              |
+| web_instance_type   | DO k8s web instance type           | string | s-2vcpu-4gb    |
+| voip_min_nodes      | DO k8s voip minimum count of node  | number | 4              |
+| voip_max_nodes      | DO k8s voip maximum count of node  | number | 4              |
+| voip_instance_type  | DO k8s voip instance type          | string | s-2vcpu-4gb    |
+| media_min_nodes     | DO k8s media minimum count of node | number | 4              |
+| media_max_nodes     | DO k8s media maximum count of node | number | 4              |
+| media_instance_type | DO k8s media instance type         | string | s-2vcpu-4gb    |

@@ -1,7 +1,7 @@
 resource "digitalocean_kubernetes_cluster" "k8s" {
   name    = var.cluster_name
   region  = var.do_region
-  version = var.kube_version
+  version = var.cluster_version
 
   node_pool {
     name       = "web"

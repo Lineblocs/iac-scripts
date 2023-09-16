@@ -1,4 +1,4 @@
-variable "kube_version" {
+variable "cluster_version" {
   description = "Version to use"
   type        = string
   default     = "1.22"
@@ -29,7 +29,7 @@ variable "cluster_name" {
 variable "web_type" {
   description = "Digital Ocean Kubernetes web node pool type (e.g. `s-1vcpu-2gb` => 1vCPU, 2GB RAM)"
   type        = string
-  default     = "s-1vcpu-2gb"
+  default     = "s-2vcpu-4gb"
 }
 
 variable "web_min_nodes" {
@@ -45,9 +45,9 @@ variable "web_max_nodes" {
 }
 
 variable "voip_type" {
-  description = "Digital Ocean Kubernetes additional node pool type (e.g. `s-1vcpu-2gb` => 1vCPU, 2GB RAM)"
+  description = "Digital Ocean Kubernetes additional node pool type (e.g. `s-2vcpu-4gb` => 1vCPU, 2GB RAM)"
   type        = string
-  default     = "s-1vcpu-2gb"
+  default     = "s-2vcpu-4gb"
 }
 
 variable "voip_min_nodes" {
@@ -63,9 +63,9 @@ variable "voip_max_nodes" {
 }
 
 variable "media_type" {
-  description = "Digital Ocean Kubernetes media node pool type (e.g. `s-1vcpu-2gb` => 1vCPU, 2GB RAM)"
+  description = "Digital Ocean Kubernetes media node pool type (e.g. `s-2vcpu-4gb` => 1vCPU, 2GB RAM)"
   type        = string
-  default     = "s-1vcpu-2gb"
+  default     = "s-2vcpu-4gb"
 }
 
 variable "media_min_nodes" {
