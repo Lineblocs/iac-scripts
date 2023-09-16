@@ -1,9 +1,9 @@
-# Terraform Kubernetes on Azure AKS
+# Terraform Kubernetes on Vultr
 
-This repository contains the Terraform module for creating a Kubernetes Cluster on Azure AKS.
+This repository contains the Terraform module for creating a Kubernetes Cluster on Vultr.
 
 <p align="center">
-<img alt="Azure Logo" src="https://upload.wikimedia.org/wikipedia/fr/thumb/b/b6/Microsoft-Azure.png/240px-Microsoft-Azure.png" title="Azure Logo">
+<img alt="Vultr Logo" src="/https://www.google.com/url?sa=i&url=https%3A%2F%2Fseeklogo.com%2Fvector-logo%2F444861%2Fvultr&psig=AOvVaw20im7oJ0UECJpiFi1KPq4o&ust=1694960318172000&source=images&cd=vfe&opi=89978449&ved=0CBAQjRxqFwoTCOjso7Kpr4EDFQAAAAAdAAAAABAR" title="Vultr Logo">
 </p>
 
 - [Requirements](#Requirements)
@@ -14,42 +14,41 @@ This repository contains the Terraform module for creating a Kubernetes Cluster 
 
 ## Requirements
 
-You need a [Azure account](https://azure.microsoft.com/en-us/free)
-and [Azure CLI set up](https://learn.microsoft.com/fr-fr/cli/azure/install-azure-cli).
+You need a [Vultr account](https://www.vultr.com/register/)
+and [Vultr CLI set up](https://github.com/vultr/vultr-cli).
 
-Run `az login` to initialize your CLI. Please note that it cannot run without a credit card attached to the account.
-Having your billing information in Azure increases resource quotas and will let you run one node of each pool. For more,
-see [increase quotas](https://learn.microsoft.com/en-us/azure/quotas/quickstart-increase-quota-portal).
+Vultr CLI uses an environment variable to log you in. It is named VULTR_API_KEY, and once given a value all of Vultr
+CLI will be usable. Be aware that your shell is, in most cases, logging your commands. You can disable history with
+the help of [this article](https://www.thegeekdiary.com/how-to-remove-disable-bash-shell-command-history-on-linux/).
 
 
 ## Notes
 
-* The resources will be created in your Azure base domain
+* The resources will be created in your Vultr account.
 * You can tweak variables in the table below to customize cluster size to your need.
 * You can run this command
-  ```az aks get-credentials --resource-group <rg_name> --name <cluster_name>``` to
-  connect to the cluster.
+  ```vultr-cli kubernetes config <cluster_id (not the name !)``` to connect to the cluster.
 
 ## Defaults
 
 See tables at the end for a comprehensive list of inputs and outputs.
 
-* Default web node type: **Standard_B2s** _(2x vCPU, 8GB memory)_
-* Default media node type: **Standard_B2s** _(2x vCPU, 8GB memory)_
-* Default router node type: **Standard_B2s** _(2x vCPU, 8GB memory)_
+* Default web node type: **vc2-2c-4gb** _(2x vCPU, 4GB memory)_
+* Default media node type: **vc2-2c-4gb** _(2x vCPU, 4GB memory)_
+* Default router node type: **vc2-2c-4gb** _(2x vCPU, 4GB memory)_
 * Default web pool size: **4**
 * Default media pool size: **2**
 * Default voip pool size: **2**
-* Default zone: **null**
+* Default region: **null**
 
 ## Runtime
 
 Runtime `terraform apply`:
 
-~12min
+~4min
 
 ```bash
-terraform apply  19,52s user 1,60s system 2% cpu 14:17,06 total
+terraform apply  0,64s user 0,14s system 0% cpu 3:52,58 total
 ```
 
 ## Terraform Inputs
@@ -57,13 +56,12 @@ terraform apply  19,52s user 1,60s system 2% cpu 14:17,06 total
 | Name                | Description                                               | Type   | Default values |
 |---------------------|-----------------------------------------------------------|--------|----------------|
 | cluster_name        |                                                           | string |                |
-| cluster_version     | AKS cluster exact version, will overwrite prefix if set   | string | null           |
-| default_node_count  | AKS default node pool desired count of node (cannot be 0) | number | 1              |
-| media_count         | AKS media desired count of node                           | number | 2              |
-| media_instance_type | AKS media instance type                                   | string | Standard_B2s   |
-| location            | Azure resources region                                    | string |                |
-| voip_count          | AKS voip desired count of node                            | number | 2              |
-| voip_instance_type  | AKS voip instance type                                    | string | Standard_B2s   |
-| web_count           | AKS web desired count of node                             | number | 4              |
-| web_instance_type   | AKS web instance type                                     | string | Standard_B2s   |
-| zone                | GCP resources zone (uses region if not defined)           | string | null           |
+| cluster_version     | VKE cluster exact version, will overwrite prefix if set   | string | null           |
+| default_node_count  | VKE default node pool desired count of node (cannot be 0) | number | 1              |
+| media_count         | VKE media desired count of node                           | number | 2              |
+| media_instance_type | VKE media instance type                                   | string | Standard_B2s   |
+| voip_count          | VKE voip desired count of node                            | number | 2              |
+| voip_instance_type  | VKE voip instance type                                    | string | Standard_B2s   |
+| web_count           | VKE web desired count of node                             | number | 4              |
+| web_instance_type   | VKE web instance type                                     | string | Standard_B2s   |
+| region              | Vultr resources zone (uses region if not defined)         | string | null           |
