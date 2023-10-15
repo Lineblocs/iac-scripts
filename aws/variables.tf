@@ -105,3 +105,9 @@ variable "web_min_size" {
   default = 4
   type    = number
 }
+
+
+variable "autoscaling_enabled" {
+  default = false
+  type    = bool
+}
