@@ -67,7 +67,7 @@ terraform apply  19,52s user 1,60s system 2% cpu 14:17,06 total
 
 ### Complex types
 
-*users:*
+**users**:
 This variable contains informations about AWS users authorized to access the cluster. Here is the definition :
 
 ```hcl
