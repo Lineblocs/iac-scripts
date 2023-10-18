@@ -10,7 +10,7 @@ provider "kubernetes" {
     api_version = "client.authentication.k8s.io/v1beta1"
     command     = "aws"
     # This requires the awscli to be installed locally where Terraform is executed
-    args        = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
+    args = ["eks", "get-token", "--cluster-name", module.eks.cluster_name]
   }
 }
 
@@ -139,6 +139,7 @@ module "eks" {
       desired_size = var.web_desired_size
 
 
+
       instance_types = var.web_instance_type
     }
 
@@ -149,7 +150,7 @@ module "eks" {
 
 
       instance_types = var.voip_instance_type
-      labels         = {
+      labels = {
         routerNode = "true"
       }
     }
@@ -166,7 +167,7 @@ module "eks" {
 
   # aws-auth configmap
   manage_aws_auth_configmap = true
-  aws_auth_users            = [
+  aws_auth_users = [
     for k, v in var.users : {
       userarn  = v.arn
       username = v.name
@@ -175,4 +176,21 @@ module "eks" {
   ]
 
   tags = local.tags
+}
+
+resource "aws_autoscaling_policy" "autoscaling" {
+  # There are 3 node groups
+  count      = var.autoscaling_enabled == true ? 3 : 0
+  depends_on = [module.eks]
+
+  autoscaling_group_name = module.eks.eks_managed_node_groups_autoscaling_group_names[count.index]
+  name                   = "${module.eks.eks_managed_node_groups_autoscaling_group_names[count.index]}-dynamic-policy"
+
+  policy_type = "TargetTrackingScaling"
+  target_tracking_configuration {
+    target_value = 80
+    predefined_metric_specification {
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+  }
 }
