@@ -1,72 +1,42 @@
-terraform {
-  required_providers {
-    digitalocean = {
-      source = "digitalocean/digitalocean"
-    }
-  }
-}
-
-resource "random_id" "cluster_name" {
-  count       = var.enable_digitalocean ? 1 : 0
-  byte_length = 6
-}
-
-data "external" "get_latest_do_k8s_version" {
-  count   = var.enable_digitalocean ? 1 : 0
-  program = ["sh", "${path.module}/get_do_latest_k8s_version.sh"]
-
-  query = {
-    do_token = var.do_token
-  }
-}
-
 resource "digitalocean_kubernetes_cluster" "k8s" {
-  count   = var.enable_digitalocean ? 1 : 0
-  name    = "${var.do_k8s_name}-${random_id.cluster_name[count.index].hex}"
+  name    = var.cluster_name
   region  = var.do_region
-  version = data.external.get_latest_do_k8s_version[count.index].result["version"]
-  #version = var.kube_version
+  version = var.cluster_version
+
   node_pool {
-    name       = var.do_k8s_pool_name
-    size       = var.do_k8s_node_type
-    node_count = var.do_k8s_nodes
+    name       = "web"
+    size       = var.web_type
+    min_nodes  = var.web_min_nodes
+    max_nodes  = var.web_max_nodes
+    auto_scale = true
   }
 }
 
-resource "digitalocean_kubernetes_node_pool" "k8s_router_nodes" {
-  count      = var.enable_digitalocean ? 1 : 0
-  cluster_id = digitalocean_kubernetes_cluster.k8s[count.index].id
+resource "digitalocean_kubernetes_node_pool" "k8s_voip_nodes" {
+  cluster_id = digitalocean_kubernetes_cluster.k8s.id
 
-  name       = var.do_k8s_nodepool_name
-  size       = var.do_k8s_nodepool_type
-  node_count = var.do_k8s_nodepool_size
-  labels = {
-    routerNode  = "true"
+  name       = "voip"
+  size       = var.voip_type
+  min_nodes  = var.voip_min_nodes
+  max_nodes  = var.voip_max_nodes
+  auto_scale = true
+  labels     = {
+    routerNode = "true"
   }
 }
 
 resource "digitalocean_kubernetes_node_pool" "k8s_media_nodes" {
-  count      = var.enable_digitalocean ? 1 : 0
-  cluster_id = digitalocean_kubernetes_cluster.k8s[count.index].id
+  cluster_id = digitalocean_kubernetes_cluster.k8s.id
 
-  name       = var.do_k8s_media_nodepool_name
-  size       = var.do_k8s_media_nodepool_type
-  #node_count = var.do_k8s_media_nodepool_size
-  min_nodes  = var.do_k8s_media_nodepool_min_nodes
-  max_nodes  = var.do_k8s_media_nodepool_max_nodes
+  name       = "media"
+  size       = var.media_type
+  min_nodes  = var.media_min_nodes
+  max_nodes  = var.media_max_nodes
   auto_scale = true
 }
 
-resource "local_file" "kubeconfigdo" {
-  count    = var.enable_digitalocean ? 1 : 0
-  content  = digitalocean_kubernetes_cluster.k8s[count.index].kube_config[0].raw_config
-  filename = "${path.module}/kubeconfig_do"
-}
-
-
 resource "digitalocean_firewall" "cluster_firewall" {
-  count      = var.enable_digitalocean ? 1 : 0
-  name = "lineblocs-cluster-firewall-${digitalocean_kubernetes_cluster.k8s[count.index].id}"
+  name = "lineblocs-cluster-firewall-${digitalocean_kubernetes_cluster.k8s.id}"
 
   inbound_rule {
     protocol         = "tcp"
@@ -82,18 +52,18 @@ resource "digitalocean_firewall" "cluster_firewall" {
 
   outbound_rule {
     protocol              = "tcp"
-    port_range       = "1-65535"
+    port_range            = "1-65535"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
   outbound_rule {
     protocol              = "udp"
-    port_range       = "1-65535"
+    port_range            = "1-65535"
     destination_addresses = ["0.0.0.0/0", "::/0"]
   }
 
-  tags = ["k8s:${digitalocean_kubernetes_cluster.k8s[count.index].id}"]
+  tags       = ["k8s:${digitalocean_kubernetes_cluster.k8s.id}"]
   depends_on = [
-      digitalocean_kubernetes_cluster.k8s
+    digitalocean_kubernetes_cluster.k8s
   ]
 }

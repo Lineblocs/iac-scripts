@@ -1,115 +1,77 @@
-# Lineblocs IaC scripts
+# Terraform Kubernetes on Digital Ocean
 
-This repository contains the scripts and Terraform modules for deploying Lineblocs on Digital Ocean.
+This repository contains the Terraform module for creating a Kubernetes Cluster on Digital Ocean.
 
-It uses the latest available Digital Ocean Kubernetes slug version available and creates a kubeconfig file at completion.
+<p align="center">
+<img alt="DO Logo" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/DigitalOcean_logo.svg/240px-DigitalOcean_logo.svg.png" title="DO Logo">
+</p>
 
-## Requirements / Dependencies
+- [Terraform Kubernetes on Digital Ocean](#Terraform-Kubernetes-on-Digital-Ocean)
+- [Requirements](#Requirements)
+- [Notes](#Notes)
+- [Defaults](#Defaults)
+- [Runtime](#Runtime)
+- [Terraform Inputs](#Terraform-Inputs)
+- [Outputs](#Outputs)
 
-```
-Digitalocean account
-Registered domain name
-kubectl >= 1
-helm >= 3
-terraform >= 1.0.11
-```
+## Requirements
 
-## Download pre-requisites
+You need a [Digital Ocean account](https://cloud.digitalocean.com/registrations/new)
+and [doctl set up](https://docs.digitalocean.com/reference/doctl/).
 
-### Kubectl
+For the project you want, you should create an API token in settings and run this command :
 
-Links to download kubectl can be found here: (kubectl tools)[https://kubernetes.io/docs/tasks/tools/]
-
-### Helm
-
-To download latest version of Helm, please follow the instructions in the link below:
-
-(Helm | Installing Helm)[https://helm.sh/docs/intro/install/]
-
-> note: please make sure to download version v3 or later
-
-### Terraform
-
-(Download Terraform - Terraform by HashiCorp)[https://www.terraform.io/downloads.html]
-
-## Installing Lineblocs
-
-Once you have setup all the dependencies, you can get started with the installation. This process consists of 2 steps:
-
-1. Creation of IaC resources
-2. K8s Deployment
-
-In the repository, there are helper scripts for K8s. These scripts can be used to deploy all of the Kubernetes services. For reference, the scripts can be found in the **k8s** directory.
-
-
-### Installation
-
-To get started with the installation, please refer to the following instructions:
-
-1. Setup terraform
-
-to setup the solution, please run:
-```
-terrform init
+```bash
+doctl auth init --context <name_of_the_new_context>
 ```
 
-2. make copy of example variables file
-```
-cp vars.tfvars.example vars.tfvars
-```
+doctl will prompt you for the token. Then, everything is ready.
 
-3. edit vars.tfvars
-    a) set do_region to a valid region. to view list of regions, please refer to [Regional Availability Matrix :: DigitalOcean Documentation](https://docs.digitalocean.com/products/platform/availability-matrix/)
-    b) do_token should be set to your DigitalOcean API token
-    c) (optional) changing the kube_version is optional. But if decide to change it, please be advised of potential issues. For example, some features may not be supported in older versions of Kubernetes.
+## Notes
 
-4. deploy infrastructure
+* The resources will be created in your DO project
+* You can tweak variables in the table below to customize cluster size to your need.
+* You can run this command
+  ```doctl kubernetes cluster kubeconfig save <cluster_name>``` to
+  connect to the cluster.
+  More info [here](https://docs.digitalocean.com/reference/doctl/reference/kubernetes/cluster/kubeconfig/)
 
-To deploy the solution, please run:
-```
-terraform apply
-```
+## Defaults
 
-> note: when you run this command, Terraform will automatically create the kubernetes config for you. The config will be saved in the same directory as the scripts.
+See tables at the end for a comprehensive list of inputs and outputs.
 
-5. configure K8s
+* Default web node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
+* Default media node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
+* Default router node type: **s-2vcpu-4gb** _(2x vCPU, 8GB memory)_
+* Default web pool size: **4**
+* Default media pool size: **2**
+* Default voip pool size: **2**
+* Default region: **tor1**
 
-Once the Terraform scripts finish running, you can configure K8s.
+## Runtime
 
-To setup the config, please run:
-```
-export KUBECONFIG=$(pwd)/kubeconfig_do
-```
+Runtime `terraform apply`:
 
-5. install K8s services
+~8min
 
-Next, to setup the Kubernetes cluster, please run:
-
-```
-./setup_k8s.sh -d {YOUR_DOMAIN_NAME}
+```bash
+terraform apply  1,18s user 0,16s system 0% cpu 7:57,77 total
 ```
 
-> Note: this may take a few minutes. However you will be notified of any updates
+## Terraform Inputs
 
-Once the installation has completed, you will receive a link to the admin portal where you can setup the service. To complete the configuration, please open this link using a browser.
-
-## Configuring Lineblocs
-
-In the configuration, there are a few settings to keep in mind. For example, you can choose which TTS provider to use, or pick where you want to store your media files. But it is optional to change the config, and in most cases the default settings are fine.
-
-To finish the setup process, please go over all of the setup screens and fill in any required fields. 
-
-Then on the final screen, click "Save configuration".
-
-## Completing setup - logging in
-
-If you havent noticed any errors yet then Lineblocs is now ready for usage - you can login to the admin dashboard or create accounts in the user portal.
-
-## Next steps
-
-For more helpful guides, be sure to review the following articles:
-
-[Lineblocs - Setup SIP providers](https://docs.digitalocean.com/products/platform/availability-matrix/)
-[Lineblocs - Upload call rates](https://docs.digitalocean.com/products/platform/availability-matrix/)
-[Lineblocs - Debuging media servers](https://docs.digitalocean.com/products/platform/availability-matrix/)
-[Lineblocs - Deploying new SIP router](https://docs.digitalocean.com/products/platform/availability-matrix/)
+| Name                | Description                        | Type   | Default values |
+|---------------------|------------------------------------|--------|----------------|
+| cluster_name        | DO cluster name                    | string |                |
+| project_id          | DO project ID                      | string |                |
+| do_region           | DO resources region                | string |                |
+| do_token            | DO access token                    | string |                |
+| web_min_nodes       | DO k8s web minimum count of node   | number | 4              |
+| web_max_nodes       | DO k8s web maximum count of node   | number | 4              |
+| web_instance_type   | DO k8s web instance type           | string | s-2vcpu-4gb    |
+| voip_min_nodes      | DO k8s voip minimum count of node  | number | 4              |
+| voip_max_nodes      | DO k8s voip maximum count of node  | number | 4              |
+| voip_instance_type  | DO k8s voip instance type          | string | s-2vcpu-4gb    |
+| media_min_nodes     | DO k8s media minimum count of node | number | 4              |
+| media_max_nodes     | DO k8s media maximum count of node | number | 4              |
+| media_instance_type | DO k8s media instance type         | string | s-2vcpu-4gb    |
